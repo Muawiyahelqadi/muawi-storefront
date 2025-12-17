@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/src/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Textarea } from "@/src/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/src/components/ui/select";
 import { Phone, ArrowRight } from "lucide-react";
+import { DatePicker } from "@/src/components/ui/datepicker";
 
 const Appointment = () => {
   const [formData, setFormData] = useState({
@@ -75,7 +76,7 @@ const Appointment = () => {
                 </h2>
                 <p className="text-muted-foreground mb-6">
                   The process of booking an appointment is simple. Just fill out
-                  the form below, and we'll get back to you shortly.
+                  the form below, and we will get back to you shortly.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -83,7 +84,7 @@ const Appointment = () => {
                     <Select
                       onValueChange={(value) => handleChange("service", value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Services" />
                       </SelectTrigger>
                       <SelectContent>
@@ -94,28 +95,19 @@ const Appointment = () => {
                         ))}
                       </SelectContent>
                     </Select>
-
-                    <Input
-                      type="text"
-                      placeholder="dd/mm/yyyy"
-                      value={formData.date}
-                      onChange={(e) => handleChange("date", e.target.value)}
-                    />
-
+                    <DatePicker />
                     <Input
                       type="text"
                       placeholder="Time"
                       value={formData.time}
                       onChange={(e) => handleChange("time", e.target.value)}
                     />
-
                     <Input
                       type="text"
                       placeholder="Full Name"
                       value={formData.name}
                       onChange={(e) => handleChange("name", e.target.value)}
                     />
-
                     <Input
                       type="tel"
                       placeholder="Phone Number"
@@ -123,7 +115,6 @@ const Appointment = () => {
                       onChange={(e) => handleChange("phone", e.target.value)}
                     />
                   </div>
-
                   <Textarea
                     placeholder="Your Message"
                     rows={6}
@@ -131,7 +122,6 @@ const Appointment = () => {
                     onChange={(e) => handleChange("message", e.target.value)}
                     className="resize-none"
                   />
-
                   <Button type="submit" className="w-full rounded-full">
                     Make Appoinment
                     <ArrowRight className="ml-2 w-4 h-4" />

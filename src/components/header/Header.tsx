@@ -61,7 +61,7 @@ const Header = () => {
       <nav className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link
-            href="/"
+            href="/public"
             className="flex items-center gap-2 group"
             aria-label="Emily Home"
           >
