@@ -1,17 +1,16 @@
-import HeroBanner from "@/src/components/heroBanner/HeroBanner";
-import Features from "@/src/components/features/Features";
-import About from "@/src/components/about/About";
-import Services from "@/src/components/services/Services";
-import Appointment from "@/src/components/appointment/Appointment";
+import { fetchHomePageByType } from "@/src/sanity/queries/home";
+import { SectionRenderer } from "@/src/components/sections/section-renderer";
 
-export default function Home() {
+const Home = async () => {
+  const data = await fetchHomePageByType();
+  console.log({ data });
   return (
     <main className="pt-18">
-      <HeroBanner />
-      <Features />
-      <About />
-      <Services />
-      <Appointment />
+      {data.sections.map((section) => (
+        <SectionRenderer key={section._key} section={section} />
+      ))}
     </main>
   );
-}
+};
+
+export default Home;

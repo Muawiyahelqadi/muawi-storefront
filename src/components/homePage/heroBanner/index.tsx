@@ -1,13 +1,18 @@
 import React from "react";
 import { Button } from "@/src/components/ui/button";
+import { HeroSection } from "@/src/sanity/types/sections.types";
+import { hasCta } from "@/src/utilities/utilities";
+import { getImageUrl } from "@/src/utilities/image-builder";
 
-const HeroBanner = () => {
+const HeroBanner = (props: HeroSection) => {
   return (
     <section
       className="relative overflow-hidden bg-white min-h-[550px] md:min-h-[450px] bg-cover bg-no-repeat"
       id="heroBanner"
       style={{
-        backgroundImage: 'url("/images/bg/slider-bg-1.jpg")',
+        backgroundImage: props.image
+          ? `url("${getImageUrl(props.image)}")`
+          : "none",
       }}
     >
       <div className="container mx-auto max-w-7xl px-4">
@@ -16,20 +21,17 @@ const HeroBanner = () => {
             <div className="pt-20 pb-40 space-y-6">
               <div className="h-1 w-12 bg-primary mb-3"></div>
               <span className="text-sm font-semibold tracking-wider uppercase text-muted-foreground">
-                Professional Care For Your Health
+                {props.subtitle}
               </span>
-              <h1>Good Health Moves Us Forward</h1>
-              <p>
-                Humanity stands as a cornerstone of professionalism for any
-                doctor. Here at our clinic, we prioritize your holistic
-                well-being, nurturing both your mental and physical health with
-                meticulous care.
-              </p>
-              <div className="pt-4">
-                <Button className="rounded-full group" withArrow={true}>
-                  Make Appointment
-                </Button>
-              </div>
+              <h1>{props.title}</h1>
+              <p>{props.description}</p>
+              {hasCta(props.cta) && (
+                <div className="pt-4">
+                  <Button className="rounded-full group" withArrow={true}>
+                    {props.cta!.text}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

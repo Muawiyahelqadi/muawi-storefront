@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "@/src/components/header/Header";
-import Footer from "@/src/components/footer/Footer";
+import Header from "@/src/components/header";
+import Footer from "@/src/components/footer";
 import { NextIntlClientProvider } from "next-intl";
+import { initImageHelper } from "@/src/utilities/image-builder";
+import { client } from "@/src/sanity/lib/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +26,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  initImageHelper(client);
+
   return (
     <html lang="en">
       <body

@@ -14,8 +14,12 @@ import {
 } from "@/src/components/ui/select";
 import { Phone, ArrowRight } from "lucide-react";
 import { DatePicker } from "@/src/components/ui/datepicker";
+import { AppointmentSection } from "@/src/sanity/types/sections.types";
+import Image from "next/image";
+import { getImageUrl } from "@/src/utilities/image-builder";
+import { formatPhoneNumber } from "@/src/utilities/utilities";
 
-const Appointment = () => {
+const Appointment = (props: AppointmentSection) => {
   const [formData, setFormData] = useState({
     service: "",
     date: "",
@@ -25,59 +29,52 @@ const Appointment = () => {
     message: "",
   });
 
-  const services = [
-    "Select Services",
-    "Comprehensive Physical Examinations",
-    "Preventive Care and Wellness",
-    "Chronic Disease Management",
-    "Acute Illness Management",
-    "Medication Management",
-    "Diagnostic Testing",
-    "Telemedicine Consultations",
-    "Nutritional Guidance",
-    "Mental Health Support",
-  ];
-
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
     // Add your form submission logic here
   };
 
-  const handleChange = (field, value) => {
+  const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <section className="py-16 px-4" id="appoinment">
+    <section className="py-16 px-4" id="appointment">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div className="relative">
-            <img
-              src="/images/about/profile-1.jpg"
-              alt="Dr. Emily"
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
-            <Card className="absolute bottom-4 left-4 right-4 bg-primary text-white border-0">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <Phone className="w-6 h-6" />
-                  <h2 className="text-xl font-bold">+2-990-770-55</h2>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="relative max-w-full max-h-full">
+            {props.image && (
+              <Image
+                src={getImageUrl(props.image)}
+                alt=""
+                className="w-auto h-auto rounded-lg shadow-lg"
+                width={200}
+                height={200}
+              />
+            )}
           </div>
 
           <div>
             <Card className="shadow-lg">
               <CardContent className="p-6 md:p-8">
                 <h2 className="text-3xl font-bold mb-2 text-primary">
-                  Book appointment
+                  {props.title}
                 </h2>
-                <p className="text-muted-foreground mb-6">
-                  The process of booking an appointment is simple. Just fill out
-                  the form below, and we will get back to you shortly.
+                <p className="text-muted-foreground mb-4">
+                  {props.description}
                 </p>
+
+                {props.phone && (
+                  <div className="flex items-center gap-3 mb-6">
+                    <Phone className="w-6 h-6 text-muted-foreground" />
+                    <a href={props.phone}>
+                      <p className="text-muted-foreground hover:text-primary mb-0">
+                        {formatPhoneNumber(props.phone)}
+                      </p>
+                    </a>
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,10 +82,10 @@ const Appointment = () => {
                       onValueChange={(value) => handleChange("service", value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Services" />
+                        <SelectValue placeholder="Select Service" />
                       </SelectTrigger>
                       <SelectContent>
-                        {services.slice(1).map((service, index) => (
+                        {props.services.map((service, index) => (
                           <SelectItem key={index} value={service}>
                             {service}
                           </SelectItem>
@@ -123,7 +120,7 @@ const Appointment = () => {
                     className="resize-none"
                   />
                   <Button type="submit" className="w-full rounded-full">
-                    Make Appoinment
+                    Make Appointment
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </form>
