@@ -10,6 +10,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/src/components/ui/popover";
+import useTranslations from "@/src/hook/useTranslations";
+import { useLocale } from "use-intl";
 
 interface Props {
   blockedDateRanges?: { endDate: string; startDate: string; reason?: string }[];
@@ -75,6 +77,10 @@ function isDateBlocked(date: Date, blockedDates?: Array<{ date: string }>) {
 }
 
 export function DatePicker(props: Props) {
+  const translate = useTranslations();
+  const locale = useLocale();
+  const isArabic = locale === "ar";
+
   const { blockedDates, blockedDateRanges } = props;
 
   const [open, setOpen] = React.useState(false);
@@ -149,7 +155,7 @@ export function DatePicker(props: Props) {
               className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
             >
               <CalendarIcon className="size-3.5" />
-              <span className="sr-only">Select date</span>
+              <span className="sr-only">{translate("select_date")}</span>
             </Button>
           </PopoverTrigger>
           <PopoverContent

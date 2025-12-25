@@ -1,6 +1,7 @@
 import { groq } from "next-sanity";
 import { cache } from "react";
 import { client } from "@/src/sanity/lib/client";
+import { SCHEMA_TYPES } from "@/src/sanity/schemas/schema-types";
 
 export const messagesQuery = (locale: string) => groq`
   *[_type == "dictionaries"][0]{
@@ -18,7 +19,9 @@ type Wire = { common: Row[] };
 async function fetchDictionary(locale: string) {
   const data = await client.fetch<Wire>(
     messagesQuery(locale),
-    {},
+    {
+      type: SCHEMA_TYPES.Dictionaries,
+    },
     { next: { revalidate: 0.5 } }, // revalidate every 5 minutes
   );
 

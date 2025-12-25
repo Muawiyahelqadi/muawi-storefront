@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { Phone, ArrowRight } from "lucide-react";
+import { Phone } from "lucide-react";
 import { DatePicker } from "@/src/components/ui/datepicker";
 import { AppointmentSection } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
@@ -68,10 +68,13 @@ const Appointment = (props: AppointmentSection) => {
 
                 {props.phone && (
                   <div className="flex items-center gap-3 mb-6">
-                    <Phone className="w-6 h-6 text-muted-foreground" />
+                    <Phone className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
                     <a href={props.phone}>
-                      <p className="text-muted-foreground hover:text-primary mb-0">
-                        {formatPhoneNumber(props.phone)}
+                      <p
+                        className="text-muted-foreground hover:text-primary mb-0 text-right"
+                        dir="rtl"
+                      >
+                        <span dir="ltr">{formatPhoneNumber(props.phone)}</span>
                       </p>
                     </a>
                   </div>
@@ -107,6 +110,7 @@ const Appointment = (props: AppointmentSection) => {
                     />
                     <Input
                       type="tel"
+                      className="rtl:text-right"
                       placeholder={translate("phone_number")}
                       value={formData.phone}
                       onChange={(e) => handleChange("phone", e.target.value)}
@@ -119,9 +123,8 @@ const Appointment = (props: AppointmentSection) => {
                     onChange={(e) => handleChange("message", e.target.value)}
                     className="resize-none"
                   />
-                  <Button type="submit" className="w-full rounded-full">
+                  <Button type="submit" className="w-full">
                     {translate("make_appointment")}
-                    <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </form>
               </CardContent>

@@ -7,15 +7,15 @@ import { getImageUrl } from "@/src/utilities/image-builder";
 const HeroBanner = (props: HeroSection) => {
   return (
     <section
-      className="relative overflow-hidden bg-white min-h-[550px] md:min-h-[450px] bg-cover bg-no-repeat"
-      id="heroBanner"
+      className="relative overflow-hidden bg-white min-h-[550px] md:min-h-[450px] bg-cover bg-no-repeat rtl:scale-x-[-1]"
+      id="hero"
       style={{
         backgroundImage: props.image
           ? `url("${getImageUrl(props.image)}")`
           : "none",
       }}
     >
-      <div className="container mx-auto max-w-7xl px-4">
+      <div className="container mx-auto max-w-7xl px-4 rtl:scale-x-[-1]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7 xl:col-span-7">
             <div className="pt-20 pb-40 space-y-6">
@@ -27,9 +27,7 @@ const HeroBanner = (props: HeroSection) => {
               <p>{props.description}</p>
               {hasCta(props.cta) && (
                 <div className="pt-4">
-                  <Button className="rounded-full group" withArrow={true}>
-                    {props.cta!.text}
-                  </Button>
+                  <Button withArrow>{props.cta!.text}</Button>
                 </div>
               )}
             </div>

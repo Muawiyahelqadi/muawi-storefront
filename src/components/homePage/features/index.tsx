@@ -49,7 +49,7 @@ const Features = (props: FeaturesSection) => {
                 {/*  </ul>*/}
                 {/*)}*/}
                 {hasCta(feature.cta) && (
-                  <Button className="mt-4 rounded-full" withArrow={true}>
+                  <Button className="mt-4" withArrow={true}>
                     {feature.cta!.text}
                   </Button>
                 )}

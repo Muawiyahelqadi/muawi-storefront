@@ -89,3 +89,10 @@ export interface Page extends SanityDocument {
   };
   sections: PageSection[];
 }
+
+export interface Header extends SanityDocument {
+  _type: string;
+  title?: string;
+  logo: SanityImageSource;
+  menuItems: { title: string; url: string }[];
+}
