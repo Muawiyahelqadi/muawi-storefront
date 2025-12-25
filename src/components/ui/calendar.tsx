@@ -25,7 +25,6 @@ function Calendar({
 }) {
   const defaultClassNames = getDefaultClassNames();
 
-  console.log({ arabic: props.locale });
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}

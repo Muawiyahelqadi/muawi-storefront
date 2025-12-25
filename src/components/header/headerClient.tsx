@@ -81,7 +81,6 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
     }
   };
 
-  console.log({ activeSection });
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-50 transition-all pt-2">
       <nav className="container mx-auto px-4">
