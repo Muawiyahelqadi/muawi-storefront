@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
     // Send email with Resend
     const { data: emailData, error } = await resend.emails.send({
       from: process.env.APPOINTMENT_EMAIL_FROM!,
-      to: process.env.APPOINTMENT_EMAIL!,
+      to: process.env.APPOINTMENT_EMAIL_TO!,
       subject: `New Appointment: ${data.service} - ${data.name}`,
       replyTo: data.email || undefined,
       html: generateEmailHTML(data),
