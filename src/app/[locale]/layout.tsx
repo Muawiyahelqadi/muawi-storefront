@@ -7,6 +7,7 @@ import { initImageHelper } from "@/src/utilities/image-builder";
 import { client } from "@/src/sanity/lib/client";
 import { getLocale } from "next-intl/server";
 import { isRtlDirection } from "@/src/i18n/utilities";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default async function RootLayout({
           <Header />
           {children}
           <Footer />
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>

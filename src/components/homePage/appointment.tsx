@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { Phone } from "lucide-react";
+import { Phone, Loader2 } from "lucide-react";
 import { DatePicker } from "@/src/components/ui/datepicker";
 import { AppointmentSection } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
@@ -21,17 +21,53 @@ import { formatPhoneNumber } from "@/src/utilities/utilities";
 import useTranslations from "@/src/hook/useTranslations";
 import { isRtlDirection } from "@/src/i18n/utilities";
 import { motion } from "framer-motion";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { toast } from "sonner";
+
+// Validation schema
+const appointmentSchema = z.object({
+  service: z.string().min(1, "Please select a service"),
+  date: z.string().min(1, "Please select a date"),
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Z\u0600-\u06FF\s'-]+$/, "Name contains invalid characters"),
+  phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .regex(/^[\d\s\+\-\(\)]+$/, "Invalid phone number format"),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters")
+    .max(1000, "Message must be less than 1000 characters")
+    .optional()
+    .or(z.literal("")),
+});
+
+type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
 const Appointment = (props: AppointmentSection) => {
   const translate = useTranslations();
   const [isRTL, setIsRTL] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState({
-    service: "",
-    date: "",
-    name: "",
-    phone: "",
-    message: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<AppointmentFormData>({
+    resolver: zodResolver(appointmentSchema),
+    defaultValues: {
+      service: "",
+      date: "",
+      name: "",
+      phone: "",
+      message: "",
+    },
   });
 
   useEffect(() => {
@@ -39,13 +75,39 @@ const Appointment = (props: AppointmentSection) => {
     setIsRTL(isRTL);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-  };
+  const onSubmit = async (data: AppointmentFormData) => {
+    setIsSubmitting(true);
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    try {
+      const response = await fetch("/api/appointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to submit appointment");
+      }
+
+      toast.success(
+        translate("appointment_success") ||
+          "Appointment request sent successfully",
+      );
+
+      // Reset form after successful submission
+      reset();
+    } catch (error) {
+      toast.error(
+        translate("appointment_error") ||
+          "Failed to submit appointment. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -64,7 +126,7 @@ const Appointment = (props: AppointmentSection) => {
               <Image
                 src={getImageUrl(props.image)}
                 alt=""
-                className="w-auto h-auto rounded-lg shadow-lg mx-auto "
+                className="w-auto h-auto rounded-lg shadow-lg mx-auto"
                 width={200}
                 height={200}
               />
@@ -90,7 +152,7 @@ const Appointment = (props: AppointmentSection) => {
                 {props.phone && (
                   <div className="flex items-center gap-3 mb-6">
                     <Phone className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
-                    <a href={props.phone}>
+                    <a href={`tel:${props.phone}`}>
                       <p
                         className="text-muted-foreground hover:text-primary mb-0 text-right"
                         dir="rtl"
@@ -101,51 +163,148 @@ const Appointment = (props: AppointmentSection) => {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Select
-                      onValueChange={(value) => handleChange("service", value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={translate("select_service")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {props.services.map((service, index) => (
-                          <SelectItem key={index} value={service}>
-                            {service}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <DatePicker
-                      blockedDates={props.blockedDates}
-                      blockedDateRanges={props.blockedDateRanges}
-                    />
-                    <Input
-                      type="text"
-                      placeholder={translate("full_name")}
-                      value={formData.name}
-                      onChange={(e) => handleChange("name", e.target.value)}
-                    />
-                    <Input
-                      type="tel"
-                      className="rtl:text-right"
-                      placeholder={translate("phone_number")}
-                      value={formData.phone}
-                      onChange={(e) => handleChange("phone", e.target.value)}
-                    />
+                    {/* Service Select */}
+                    <div>
+                      <Controller
+                        name="service"
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger
+                              className={`w-full ${
+                                errors.service ? "border-red-500" : ""
+                              }`}
+                            >
+                              <SelectValue
+                                placeholder={translate("select_service")}
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {props.services.map((service, index) => (
+                                <SelectItem key={index} value={service}>
+                                  {service}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {errors.service && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.service.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Date Picker */}
+                    <div>
+                      <Controller
+                        name="date"
+                        control={control}
+                        render={({ field }) => (
+                          <DatePicker
+                            blockedDates={props.blockedDates}
+                            blockedDateRanges={props.blockedDateRanges}
+                            onDateChange={(date) => {
+                              field.onChange(date);
+                            }}
+                            className={errors.date ? "border-red-500" : ""}
+                          />
+                        )}
+                      />
+                      {errors.date && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.date.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Name Input */}
+                    <div>
+                      <Controller
+                        name="name"
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            type="text"
+                            placeholder={translate("full_name")}
+                            {...field}
+                            className={errors.name ? "border-red-500" : ""}
+                          />
+                        )}
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.name.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Phone Input */}
+                    <div>
+                      <Controller
+                        name="phone"
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            type="tel"
+                            className={`rtl:text-right ${
+                              errors.phone ? "border-red-500" : ""
+                            }`}
+                            placeholder={translate("phone_number")}
+                            {...field}
+                          />
+                        )}
+                      />
+                      {errors.phone && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.phone.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <Textarea
-                    placeholder={translate("your_message")}
-                    rows={6}
-                    value={formData.message}
-                    onChange={(e) => handleChange("message", e.target.value)}
-                    className="resize-none"
-                  />
-                  <Button type="submit" className="w-full">
-                    {translate("make_appointment")}
+
+                  {/* Message Textarea */}
+                  <div>
+                    <Controller
+                      name="message"
+                      control={control}
+                      render={({ field }) => (
+                        <Textarea
+                          placeholder={translate("your_message")}
+                          rows={6}
+                          {...field}
+                          className={`resize-none ${
+                            errors.message ? "border-red-500" : ""
+                          }`}
+                        />
+                      )}
+                    />
+                    {errors.message && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.message.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {translate("submitting") || "Submitting..."}
+                      </>
+                    ) : (
+                      translate("make_appointment")
+                    )}
                   </Button>
                 </form>
               </CardContent>

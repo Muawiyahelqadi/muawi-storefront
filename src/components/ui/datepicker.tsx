@@ -19,6 +19,9 @@ interface Props {
     date: string;
     reason?: string;
   }[];
+  onDateChange?: (date: string) => void;
+  className?: string;
+  value?: string; // Add value prop for controlled component
 }
 
 function formatDate(date: Date | undefined) {
@@ -81,12 +84,21 @@ export function DatePicker(props: Props) {
   const locale = useLocale();
   const isArabic = locale === "ar";
 
-  const { blockedDates, blockedDateRanges } = props;
+  const {
+    blockedDates,
+    blockedDateRanges,
+    onDateChange,
+    className,
+    value: controlledValue,
+  } = props;
 
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [month, setMonth] = React.useState<Date | undefined>(date);
-  const [value, setValue] = React.useState(formatDate(date));
+
+  // Initialize with current date
+  const initialDate = new Date();
+  const [date, setDate] = React.useState<Date | undefined>(initialDate);
+  const [month, setMonth] = React.useState<Date | undefined>(initialDate);
+  const [value, setValue] = React.useState(formatDate(initialDate));
 
   // Set date range: today to December 31, 2026
   const today = React.useMemo(() => {
@@ -124,6 +136,52 @@ export function DatePicker(props: Props) {
     [today, blockedDates, blockedDateRanges],
   );
 
+  // Handle date selection
+  const handleDateSelect = React.useCallback(
+    (selectedDate: Date | undefined) => {
+      setDate(selectedDate);
+      const formattedDate = formatDate(selectedDate);
+      setValue(formattedDate);
+      setOpen(false);
+
+      // Call the onDateChange callback with the formatted date
+      if (onDateChange && selectedDate) {
+        // You can change the format here if you need ISO format or different format
+        onDateChange(formattedDate);
+      }
+    },
+    [onDateChange],
+  );
+
+  // Set initial date on mount - notify parent of the initial value
+  React.useEffect(() => {
+    const formattedDate = formatDate(initialDate);
+    if (onDateChange) {
+      onDateChange(formattedDate);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency - only on mount
+
+  // Handle manual input change
+  const handleInputChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const inputValue = e.target.value;
+      setValue(inputValue);
+
+      const parsedDate = new Date(inputValue);
+      if (isValidDate(parsedDate)) {
+        setDate(parsedDate);
+        setMonth(parsedDate);
+
+        // Call the onDateChange callback
+        if (onDateChange) {
+          onDateChange(formatDate(parsedDate));
+        }
+      }
+    },
+    [onDateChange],
+  );
+
   return (
     <div className="flex flex-col gap-3">
       <div className="relative flex gap-2">
@@ -131,15 +189,8 @@ export function DatePicker(props: Props) {
           id="date"
           value={value}
           placeholder="June 01, 2025"
-          className="bg-background pr-10"
-          onChange={(e) => {
-            const date = new Date(e.target.value);
-            setValue(e.target.value);
-            if (isValidDate(date)) {
-              setDate(date);
-              setMonth(date);
-            }
-          }}
+          className={`bg-background pr-10 ${className || ""}`}
+          onChange={handleInputChange}
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
               e.preventDefault();
@@ -153,6 +204,7 @@ export function DatePicker(props: Props) {
               id="date-picker"
               variant="ghost"
               className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+              type="button"
             >
               <CalendarIcon className="size-3.5" />
               <span className="sr-only">{translate("select_date")}</span>
@@ -172,11 +224,7 @@ export function DatePicker(props: Props) {
               endMonth={maxDate}
               month={month}
               onMonthChange={setMonth}
-              onSelect={(date) => {
-                setDate(date);
-                setValue(formatDate(date));
-                setOpen(false);
-              }}
+              onSelect={handleDateSelect}
               disabled={isDisabled}
             />
           </PopoverContent>
