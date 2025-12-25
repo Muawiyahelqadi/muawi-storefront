@@ -57,7 +57,7 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
   }, [menuItems]);
 
   const goToSection = (section?: string) => {
-    if (!section) {
+    if (!section || section === "#hero") {
       // Scroll to top if no section
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -68,12 +68,20 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
 
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const offset = 50; // Adjust this value for more/less offset
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     } else {
       console.warn(`No element found with id: ${id}`);
     }
   };
 
+  console.log({ activeSection });
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-50 transition-all pt-2">
       <nav className="container mx-auto px-4">
@@ -109,22 +117,28 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
             {menuItems?.map((link) => (
               <li key={link.url}>
                 <Link
-                  href={link.url || "#"} // prevent empty href
+                  href={link.url || "#"}
                   onClick={(e) => {
-                    e.preventDefault(); // prevent default page jump
+                    e.preventDefault();
                     goToSection(link.url);
                   }}
                   className={cn(
-                    "font-bold transition-colors relative pb-1",
+                    "font-bold transition-colors relative pb-2 group",
                     activeSection === link.url
                       ? "text-blue-600"
                       : "text-gray-700 hover:text-blue-600",
                   )}
                 >
                   {link.title}
-                  {activeSection === link.url && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 animate-[expand_0.3s_ease-out]" />
-                  )}
+                  <span
+                    className={cn(
+                      "absolute bottom-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out",
+                      "ltr:left-0 ltr:origin-left rtl:right-0 rtl:origin-right",
+                      activeSection === link.url
+                        ? "w-full"
+                        : "w-0 group-hover:w-full",
+                    )}
+                  />
                 </Link>
               </li>
             ))}
