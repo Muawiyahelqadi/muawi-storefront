@@ -10,7 +10,6 @@ import { getImageUrl } from "@/src/utilities/image-builder";
 
 const HeaderClient = ({ title, logo, menuItems }: Header) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
 
   const handleLinkClick = () => {
     setIsNavOpen(false);
@@ -26,35 +25,6 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
       document.body.style.overflow = "unset";
     };
   }, [isNavOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = menuItems?.map((link) => link.url.substring(1));
-      const scrollPosition = window.scrollY + 100;
-
-      if (!sections || sections.length == 0) {
-        return;
-      }
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
-            setActiveSection(`#${section}`);
-            break;
-          }
-        }
-      }
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [menuItems]);
 
   const goToSection = (section?: string) => {
     if (!section || section === "#hero") {
@@ -91,7 +61,7 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
             className="flex items-center gap-2 group"
             aria-label={title}
           >
-            <div className="relative max-h-15 max-w-15">
+            <div className="relative max-h-[60px] max-w-[200px]">
               {logo && (
                 <Image
                   src={getImageUrl(logo)}
@@ -122,20 +92,14 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
                     goToSection(link.url);
                   }}
                   className={cn(
-                    "font-bold transition-colors relative pb-2 group",
-                    activeSection === link.url
-                      ? "text-blue-600"
-                      : "text-gray-700 hover:text-blue-600",
+                    "font-bold transition-colors relative pb-2 group text-gray-500 hover:text-blue-600",
                   )}
                 >
                   {link.title}
                   <span
                     className={cn(
                       "absolute bottom-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out",
-                      "ltr:left-0 ltr:origin-left rtl:right-0 rtl:origin-right",
-                      activeSection === link.url
-                        ? "w-full"
-                        : "w-0 group-hover:w-full",
+                      "ltr:left-0 ltr:origin-left rtl:right-0 rtl:origin-right w-0 group-hover:w-full",
                     )}
                   />
                 </Link>
@@ -160,10 +124,7 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
                       href={link.url}
                       onClick={handleLinkClick}
                       className={cn(
-                        "block px-4 py-2 rounded-md font-bold transition-colors",
-                        activeSection === link.url
-                          ? "text-blue-600 bg-blue-50"
-                          : "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
+                        "block px-4 py-2 rounded-md font-bold transition-colors text-gray-700 hover:text-blue-600 hover:bg-gray-50",
                       )}
                     >
                       {link.title}

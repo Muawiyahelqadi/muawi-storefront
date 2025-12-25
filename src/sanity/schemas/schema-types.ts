@@ -1,6 +1,7 @@
 export const SCHEMA_TYPES = {
   HOME_PAGE: "homePage",
   Header: "header",
+  Footer: "footer",
   Dictionaries: "dictionaries",
 } as const;
 

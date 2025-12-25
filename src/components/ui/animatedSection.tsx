@@ -8,7 +8,7 @@ import {
 } from "motion-dom";
 
 interface Props extends MotionNodeAnimationOptions, MotionNodeViewportOptions {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 

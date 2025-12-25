@@ -96,3 +96,9 @@ export interface Header extends SanityDocument {
   logo: SanityImageSource;
   menuItems: { title: string; url: string }[];
 }
+
+export interface Footer extends SanityDocument {
+  _type: string;
+  copyright: string;
+  socialMediaItems: { iconName: IconName; url: string }[];
+}

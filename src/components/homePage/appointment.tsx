@@ -19,9 +19,13 @@ import Image from "next/image";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { formatPhoneNumber } from "@/src/utilities/utilities";
 import useTranslations from "@/src/hook/useTranslations";
+import { isRtlDirection } from "@/src/i18n/utilities"; // or your path
+import { motion } from "framer-motion";
 
 const Appointment = (props: AppointmentSection) => {
   const translate = useTranslations();
+  const isRTL = isRtlDirection();
+
   const [formData, setFormData] = useState({
     service: "",
     date: "",
@@ -44,7 +48,14 @@ const Appointment = (props: AppointmentSection) => {
     <section className="py-16 px-4" id="appointment">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div className="relative max-w-full max-h-full">
+          {/* Image - slides from left (or right in RTL) */}
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, amount: 0.3 }}
+            className="relative max-w-full max-h-full"
+          >
             {props.image && (
               <Image
                 src={getImageUrl(props.image)}
@@ -54,9 +65,15 @@ const Appointment = (props: AppointmentSection) => {
                 height={200}
               />
             )}
-          </div>
+          </motion.div>
 
-          <div>
+          {/* Form - slides from right (or left in RTL) */}
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true, amount: 0.3 }}
+          >
             <Card className="shadow-lg">
               <CardContent className="p-6 md:p-8">
                 <h2 className="text-3xl font-bold mb-3 text-primary">
@@ -129,7 +146,7 @@ const Appointment = (props: AppointmentSection) => {
                 </form>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

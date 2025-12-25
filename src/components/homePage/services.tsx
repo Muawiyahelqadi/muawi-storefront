@@ -1,9 +1,11 @@
+"use client";
+
 import React from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { ServicesSection } from "@/src/sanity/types/sections.types";
 import { DynamicIcon } from "lucide-react/dynamic";
-import { motion } from "framer-motion";
 import AnimatedSection from "@/src/components/ui/animatedSection";
+import { motion } from "framer-motion";
 
 const Services = (props: ServicesSection) => {
   return (
@@ -18,28 +20,52 @@ const Services = (props: ServicesSection) => {
           className="flex justify-center mb-12"
         >
           <div className="text-center max-w-2xl">
-            <h2 className="text-4xl font-bold mb-4">{props.title}</h2>
-            <div className="w-20 h-1 bg-primary mx-auto my-4"></div>
-            <p className="text-muted-foreground">{props.description}</p>
+            <motion.h2
+              initial={{ opacity: 0, y: -30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true, amount: 0.3 }}
+              className="text-4xl font-bold mb-4"
+            >
+              {props.title}
+            </motion.h2>
+            <motion.div
+              initial={{ opacity: 0, width: 0 }}
+              whileInView={{ opacity: 1, width: 80 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.3 }}
+              className="h-1 bg-primary mx-auto my-4"
+            />
+
+            {/* Description - fade in */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true, amount: 0.3 }}
+              className="text-muted-foreground"
+            >
+              {props.description}
+            </motion.p>
           </div>
         </AnimatedSection>
 
         {/* Cards - staggered animation */}
-        <motion.div
+        <AnimatedSection
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
           variants={{
             visible: {
               transition: {
-                staggerChildren: 0.1,
+                delayChildren: 0.5,
               },
             },
           }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {props.items?.map((service, index) => (
-            <motion.div
+            <AnimatedSection
               key={index}
               variants={{
                 hidden: { opacity: 0, y: 30 },
@@ -63,9 +89,9 @@ const Services = (props: ServicesSection) => {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </AnimatedSection>
           ))}
-        </motion.div>
+        </AnimatedSection>
       </div>
     </section>
   );
