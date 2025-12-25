@@ -1,4 +1,4 @@
-import HeroBanner from "@/src/components/homePage/heroBanner";
+import HeroBanner from "@/src/components/homePage/hero";
 import Features from "@/src/components/homePage/features";
 import Services from "@/src/components/homePage/services";
 import About from "@/src/components/homePage/about";

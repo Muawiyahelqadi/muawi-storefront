@@ -9,6 +9,7 @@ import {
 
 interface Props extends MotionNodeAnimationOptions, MotionNodeViewportOptions {
   children: ReactNode;
+  className?: string;
 }
 
 export default function AnimatedSection({ children, ...props }: Props) {
