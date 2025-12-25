@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { CalendarIcon } from "lucide-react";
-
 import { Button } from "@/src/components/ui/button";
 import { Calendar } from "@/src/components/ui/calendar";
 import { Input } from "@/src/components/ui/input";
@@ -11,6 +10,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/src/components/ui/popover";
+
+interface Props {
+  blockedDateRanges?: { endDate: string; startDate: string; reason?: string }[];
+  blockedDates?: {
+    date: string;
+    reason?: string;
+  }[];
+}
 
 function formatDate(date: Date | undefined) {
   if (!date) {
@@ -31,16 +38,85 @@ function isValidDate(date: Date | undefined) {
   return !isNaN(date.getTime());
 }
 
-export function DatePicker() {
+// Helper function to check if a date is in any blocked range
+function isDateInBlockedRanges(
+  date: Date,
+  blockedRanges?: Array<{ startDate: string; endDate: string }>,
+) {
+  if (!blockedRanges || blockedRanges.length === 0) return false;
+
+  return blockedRanges.some((range) => {
+    const start = new Date(range.startDate);
+    const end = new Date(range.endDate);
+
+    // Set time to start/end of day for accurate comparison
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+
+    const checkDate = new Date(date);
+    checkDate.setHours(12, 0, 0, 0); // Use noon to avoid timezone issues
+
+    return checkDate >= start && checkDate <= end;
+  });
+}
+
+// Helper function to check if date matches any blocked single date
+function isDateBlocked(date: Date, blockedDates?: Array<{ date: string }>) {
+  if (!blockedDates || blockedDates.length === 0) return false;
+
+  return blockedDates.some((blocked) => {
+    const blockedDate = new Date(blocked.date);
+    return (
+      date.getDate() === blockedDate.getDate() &&
+      date.getMonth() === blockedDate.getMonth() &&
+      date.getFullYear() === blockedDate.getFullYear()
+    );
+  });
+}
+
+export function DatePicker(props: Props) {
+  const { blockedDates, blockedDateRanges } = props;
+
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [month, setMonth] = React.useState<Date | undefined>(date);
   const [value, setValue] = React.useState(formatDate(date));
 
-  // Set minimum date (e.g., today)
-  const minDate = new Date();
-  // Or set a specific date:
-  // const minDate = new Date('2025-01-01');
+  // Set date range: today to December 31, 2026
+  const today = React.useMemo(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, []);
+
+  const maxDate = React.useMemo(() => {
+    const date = new Date(2026, 11, 31);
+    date.setHours(23, 59, 59, 999);
+    return date;
+  }, []);
+
+  // Combined disabled logic
+  const isDisabled = React.useCallback(
+    (date: Date) => {
+      // Check minimum date
+      if (date < today) {
+        return true;
+      }
+
+      // Check single blocked dates
+      if (isDateBlocked(date, blockedDates)) {
+        return true;
+      }
+
+      // Check blocked date ranges
+      if (isDateInBlockedRanges(date, blockedDateRanges)) {
+        return true;
+      }
+
+      return false;
+    },
+    [today, blockedDates, blockedDateRanges],
+  );
 
   return (
     <div className="flex flex-col gap-3">
@@ -86,6 +162,8 @@ export function DatePicker() {
               mode="single"
               selected={date}
               captionLayout="dropdown"
+              startMonth={today}
+              endMonth={maxDate}
               month={month}
               onMonthChange={setMonth}
               onSelect={(date) => {
@@ -93,13 +171,7 @@ export function DatePicker() {
                 setValue(formatDate(date));
                 setOpen(false);
               }}
-              disabled={(date) => date < minDate}
-              // Or disable dates before today (without time):
-              // disabled={(date) => {
-              //   const today = new Date();
-              //   today.setHours(0, 0, 0, 0);
-              //   return date < today;
-              // }}
+              disabled={isDisabled}
             />
           </PopoverContent>
         </Popover>

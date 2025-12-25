@@ -57,6 +57,17 @@ export interface AppointmentSection extends SanitySection {
   services: string[];
   image?: SanityImageSource;
   phone?: string;
+  blockedDateRanges: {
+    _key: string;
+    endDate: string;
+    startDate: string;
+    reason?: string;
+  }[];
+  blockedDates: {
+    _key: string;
+    date: string;
+    reason?: string;
+  }[];
 }
 
 // Union type of all sections

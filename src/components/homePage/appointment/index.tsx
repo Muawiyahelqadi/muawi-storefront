@@ -18,12 +18,13 @@ import { AppointmentSection } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { formatPhoneNumber } from "@/src/utilities/utilities";
+import useTranslations from "@/src/hook/useTranslations";
 
 const Appointment = (props: AppointmentSection) => {
+  const translate = useTranslations();
   const [formData, setFormData] = useState({
     service: "",
     date: "",
-    time: "",
     name: "",
     phone: "",
     message: "",
@@ -58,7 +59,7 @@ const Appointment = (props: AppointmentSection) => {
           <div>
             <Card className="shadow-lg">
               <CardContent className="p-6 md:p-8">
-                <h2 className="text-3xl font-bold mb-2 text-primary">
+                <h2 className="text-3xl font-bold mb-3 text-primary">
                   {props.title}
                 </h2>
                 <p className="text-muted-foreground mb-4">
@@ -82,7 +83,9 @@ const Appointment = (props: AppointmentSection) => {
                       onValueChange={(value) => handleChange("service", value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Service" />
+                        <SelectValue
+                          placeholder={translate("select_service")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {props.services.map((service, index) => (
@@ -92,35 +95,32 @@ const Appointment = (props: AppointmentSection) => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <DatePicker />
-                    <Input
-                      type="text"
-                      placeholder="Time"
-                      value={formData.time}
-                      onChange={(e) => handleChange("time", e.target.value)}
+                    <DatePicker
+                      blockedDates={props.blockedDates}
+                      blockedDateRanges={props.blockedDateRanges}
                     />
                     <Input
                       type="text"
-                      placeholder="Full Name"
+                      placeholder={translate("full_name")}
                       value={formData.name}
                       onChange={(e) => handleChange("name", e.target.value)}
                     />
                     <Input
                       type="tel"
-                      placeholder="Phone Number"
+                      placeholder={translate("phone_number")}
                       value={formData.phone}
                       onChange={(e) => handleChange("phone", e.target.value)}
                     />
                   </div>
                   <Textarea
-                    placeholder="Your Message"
+                    placeholder={translate("your_message")}
                     rows={6}
                     value={formData.message}
                     onChange={(e) => handleChange("message", e.target.value)}
                     className="resize-none"
                   />
                   <Button type="submit" className="w-full rounded-full">
-                    Make Appointment
+                    {translate("make_appointment")}
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </form>
