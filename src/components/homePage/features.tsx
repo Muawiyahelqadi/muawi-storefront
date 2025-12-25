@@ -16,7 +16,7 @@ const Features = (props: FeaturesSection) => {
           variants={{
             visible: {
               transition: {
-                delayChildren: 1.5,
+                delayChildren: 0.8,
               },
             },
           }}

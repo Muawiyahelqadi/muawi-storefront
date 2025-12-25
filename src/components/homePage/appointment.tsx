@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -19,12 +19,12 @@ import Image from "next/image";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { formatPhoneNumber } from "@/src/utilities/utilities";
 import useTranslations from "@/src/hook/useTranslations";
-import { isRtlDirection } from "@/src/i18n/utilities"; // or your path
+import { isRtlDirection } from "@/src/i18n/utilities";
 import { motion } from "framer-motion";
 
 const Appointment = (props: AppointmentSection) => {
   const translate = useTranslations();
-  const isRTL = isRtlDirection();
+  const [isRTL, setIsRTL] = useState(false);
 
   const [formData, setFormData] = useState({
     service: "",
@@ -34,10 +34,14 @@ const Appointment = (props: AppointmentSection) => {
     message: "",
   });
 
+  useEffect(() => {
+    const isRTL = isRtlDirection() as boolean;
+    setIsRTL(isRTL);
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    // Add your form submission logic here
   };
 
   const handleChange = (field: string, value: string) => {
