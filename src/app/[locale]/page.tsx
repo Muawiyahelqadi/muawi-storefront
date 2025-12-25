@@ -5,7 +5,7 @@ const Home = async () => {
   const data = await fetchHomePageByType();
 
   return (
-    <main className="pt-18">
+    <main className="pt-18 overflow-hidden">
       {data.sections?.map((section) => (
         <SectionRenderer key={section._key} section={section} />
       ))}

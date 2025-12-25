@@ -64,7 +64,7 @@ const Appointment = (props: AppointmentSection) => {
               <Image
                 src={getImageUrl(props.image)}
                 alt=""
-                className="w-auto h-auto rounded-lg shadow-lg"
+                className="w-auto h-auto rounded-lg shadow-lg mx-auto "
                 width={200}
                 height={200}
               />
