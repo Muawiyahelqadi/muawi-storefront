@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/src/components/ui/button";
 import { HeroSection } from "@/src/sanity/types/sections.types";
 import { hasCta } from "@/src/utilities/utilities";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/src/components/ui/animatedSection";
+import InteractiveButton from "@/src/components/ui/interactiveButton";
 
 const HeroBanner = (props: HeroSection) => {
   return (
@@ -68,7 +68,9 @@ const HeroBanner = (props: HeroSection) => {
                   transition={{ duration: 0.6, delay: 1 }}
                   className="pt-4"
                 >
-                  <Button withArrow>{props.cta!.text}</Button>
+                  <InteractiveButton withArrow href={props.cta?.url}>
+                    {props.cta!.text}
+                  </InteractiveButton>
                 </AnimatedSection>
               )}
             </div>

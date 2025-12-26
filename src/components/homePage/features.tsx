@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
 import { FeaturesSection } from "@/src/sanity/types/sections.types";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { hasCta } from "@/src/utilities/utilities";
 import AnimatedSection from "@/src/components/ui/animatedSection";
+import InteractiveButton from "@/src/components/ui/interactiveButton";
 
 const Features = (props: FeaturesSection) => {
   return (
@@ -53,23 +53,14 @@ const Features = (props: FeaturesSection) => {
                       {feature.description}
                     </p>
                   )}
-                  {/*{feature.workingHours && (*/}
-                  {/*  <ul className="space-y-0">*/}
-                  {/*    {feature.workingHours.map((schedule, idx) => (*/}
-                  {/*      <li*/}
-                  {/*        key={idx}*/}
-                  {/*        className="flex justify-between text-sm py-1.5 border-b border-black/5"*/}
-                  {/*      >*/}
-                  {/*        <span>{schedule.days} :</span>*/}
-                  {/*        <span className="font-medium">{schedule.hours}</span>*/}
-                  {/*      </li>*/}
-                  {/*    ))}*/}
-                  {/*  </ul>*/}
-                  {/*)}*/}
                   {hasCta(feature.cta) && (
-                    <Button className="mt-4" withArrow={true}>
+                    <InteractiveButton
+                      className="mt-4"
+                      withArrow={true}
+                      href={feature.cta!.url}
+                    >
                       {feature.cta!.text}
-                    </Button>
+                    </InteractiveButton>
                   )}
                 </CardContent>
               </Card>

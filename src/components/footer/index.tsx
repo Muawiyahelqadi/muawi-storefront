@@ -1,10 +1,14 @@
 import React from "react";
-import { Button } from "@/src/components/ui/button";
 import { fetchFooterByType } from "@/src/sanity/queries/footer";
 import { DynamicIcon } from "lucide-react/dynamic";
 
 const Footer = async () => {
   const footer = await fetchFooterByType();
+
+  if (!footer) {
+    return null;
+  }
+
   return (
     <footer className="pt-4 pb-2.5 bg-[#f8f9fa] border-t border-[#e5e5e5] relative mt-8">
       <div className="container mx-auto max-w-7xl px-4">
@@ -21,7 +25,7 @@ const Footer = async () => {
           </div>
 
           <div className="text-center md:text-right">
-            <ul className="flex items-center justify-center gap-4 m-0 p-0 list-none">
+            <ul className="flex items-center justify-center gap-4 m-0 p-0 pb-4 lg:pb-0 list-none">
               {footer.socialMediaItems.map((social, index) => (
                 <li key={`social-${social.url}-${index}`}>
                   <a
