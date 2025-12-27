@@ -62,7 +62,10 @@ const InputComponent = React.forwardRef<
   React.ComponentProps<"input">
 >(({ className, ...props }, ref) => (
   <Input
-    className={cn("rounded-e-lg rounded-s-none", className)}
+    className={cn(
+      "rounded-e-lg rounded-s-none rtl:rounded-e-none rtl:rounded-s-lg rtl:text-right",
+      className,
+    )}
     {...props}
     ref={ref}
   />
@@ -110,7 +113,7 @@ const CountrySelect = ({
           />
           <ChevronsUpDown
             className={cn(
-              "-mr-2 size-4 opacity-50",
+              "-mr-2 rtl:-ml-2 rtl:mr-0 size-4 opacity-50",
               disabled ? "hidden" : "opacity-100",
             )}
           />
@@ -184,7 +187,7 @@ const CountrySelectOption = ({
       <span className="flex-1 text-sm">{countryName}</span>
       <span className="text-sm text-foreground/50">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
       <CheckIcon
-        className={`ml-auto size-4 ${country === selectedCountry ? "opacity-100" : "opacity-0"}`}
+        className={`ml-auto rtl:ml-0 rtl:mr-auto size-4 ${country === selectedCountry ? "opacity-100" : "opacity-0"}`}
       />
     </CommandItem>
   );
