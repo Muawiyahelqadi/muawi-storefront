@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Textarea } from "@/src/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/src/components/ui/select";
+} from "@/components/ui/select";
 import { Phone, Loader2 } from "lucide-react";
-import { DatePicker } from "@/src/components/ui/datepicker";
+import { DatePicker } from "@/components/ui/datepicker";
 import { AppointmentSection } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
 import { getImageUrl } from "@/src/utilities/image-builder";

@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { CalendarIcon } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
-import { Calendar } from "@/src/components/ui/calendar";
-import { Input } from "@/src/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/src/components/ui/popover";
+} from "@/components/ui/popover";
 import useTranslations from "@/src/hook/useTranslations";
 import { useLocale } from "use-intl";
 

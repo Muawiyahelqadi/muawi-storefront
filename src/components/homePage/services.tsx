@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ServicesSection } from "@/src/sanity/types/sections.types";
 import { DynamicIcon } from "lucide-react/dynamic";
 import AnimatedSection from "@/src/components/ui/animatedSection";
