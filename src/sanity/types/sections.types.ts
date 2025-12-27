@@ -56,7 +56,12 @@ export interface AppointmentSection extends SanitySection {
   description: string;
   services: string[];
   image?: SanityImageSource;
-  phone?: string;
+  phonesNumber?: {
+    _key: string;
+    _type: "whatsappLink" | "phoneNumber";
+    url?: string;
+    number?: string;
+  }[];
   blockedDateRanges: {
     _key: string;
     endDate: string;
