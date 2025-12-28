@@ -1,5 +1,5 @@
 export const scrollToSection = (section?: string) => {
-  if (!section || section === "#hero") {
+  if (!section || section === "#home") {
     // Scroll to top if no section
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;

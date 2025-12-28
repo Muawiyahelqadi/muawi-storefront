@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Header } from "@/src/sanity/types/sections.types";
 import { getImageUrl } from "@/src/utilities/image-builder";
@@ -10,9 +10,14 @@ import { scrollToSection } from "@/src/utilities/scroll-handler";
 import { useEffect } from "react";
 import { useLocale } from "use-intl";
 
+const isRelativeLink = (url?: string) => {
+  return url?.startsWith("#");
+};
+
 const HeaderClient = ({ title, logo, menuItems }: Header) => {
   const locale = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
 
   // Check if we're on the home page
   const isHomePage = pathname === "/" || pathname === `/${locale}`;
@@ -27,12 +32,18 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
     e: React.MouseEvent<HTMLAnchorElement>,
     url?: string,
   ) => {
-    if (isHomePage) {
-      // On home page - use anchor scroll
+    if (isHomePage && isRelativeLink(url)) {
+      // On home page with anchor link - use smooth scroll
       e.preventDefault();
       scrollToSection(url);
+    } else if (url && isRelativeLink(url)) {
+      e.preventDefault();
+      router.push("/" + url, {
+        scroll: true,
+      });
     }
-    // On other pages - let Next.js Link handle navigation to home with hash
+    // For all other cases (page links or hash links from other pages),
+    // let Next.js Link handle navigation naturally
   };
 
   return (
@@ -41,7 +52,6 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            onClick={(e) => handleLinkClick(e)}
             className="flex items-center gap-2 group"
             aria-label={title}
           >
@@ -62,9 +72,7 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
             {menuItems?.map((link) => (
               <li key={link.url}>
                 <Link
-                  href={
-                    isHomePage ? link.url : `/${locale}${link.url || ""}`
-                  }
+                  href={link.url}
                   onClick={(e) => handleLinkClick(e, link.url)}
                   className={cn(
                     "font-bold transition-colors relative pb-2 group text-gray-500 hover:text-blue-600",
