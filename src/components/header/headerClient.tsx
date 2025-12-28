@@ -6,8 +6,18 @@ import { cn } from "@/lib/utils";
 import { Header } from "@/src/sanity/types/sections.types";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { scrollToSection } from "@/src/utilities/scroll-handler";
+import { useEffect } from "react";
+import { useLocale } from "use-intl";
 
 const HeaderClient = ({ title, logo, menuItems }: Header) => {
+  const locale = useLocale();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.currentLocale = locale;
+    }
+  }, [locale]);
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-50 transition-all pt-2">
       <nav className="container mx-auto px-4">

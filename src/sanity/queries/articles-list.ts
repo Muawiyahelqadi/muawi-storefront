@@ -7,8 +7,7 @@ import { SCHEMA_TYPES } from "@/src/sanity/schemas/schema-types";
 export async function fetchArticlesListPage() {
   const query = groq`*[_type == $type && ${languageFilter}][0]{ 
       ...,
-    }
-  `;
+  }`;
 
   return sanityFetch<ArticleList>(query, {
     type: SCHEMA_TYPES.ARTICLES_LIST,

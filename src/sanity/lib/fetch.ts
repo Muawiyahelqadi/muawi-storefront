@@ -3,6 +3,7 @@ import type { QueryParams } from "next-sanity";
 import { getLocale } from "next-intl/server";
 import { client } from "@/src/sanity/lib/client";
 import { routing } from "@/src/i18n/routing";
+import { getLocaleClientSide } from "@/src/i18n/utilities";
 
 export async function sanityFetch<T>(
   query: string,
@@ -16,7 +17,12 @@ export async function sanityFetch<T>(
     ...params
   } = options;
 
-  const locale = (await getLocale()) || routing.defaultLocale;
+  let locale;
+  if (typeof window === "undefined") {
+    locale = (await getLocale()) || routing.defaultLocale;
+  } else {
+    locale = getLocaleClientSide();
+  }
 
   return client.fetch<T>(
     query,

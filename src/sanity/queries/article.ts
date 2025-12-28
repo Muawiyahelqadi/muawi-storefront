@@ -4,7 +4,7 @@ import { Article } from "@/src/sanity/types/sections.types";
 import { languageFilter } from "@/src/sanity/types/queries.types";
 import { SCHEMA_TYPES } from "@/src/sanity/schemas/schema-types";
 
-const baseArticleQuery = groq`_type == $type && ${languageFilter} && status == "published"`;
+export const baseArticleQuery = groq`_type == "${SCHEMA_TYPES.ARTICLE}" && ${languageFilter} && status == "published"`;
 export async function fetchArticleBySlug(slug: string) {
   const query = groq`*[${baseArticleQuery} && slug.current == $slug][0]{ 
       ...,
@@ -18,13 +18,12 @@ export async function fetchArticleBySlug(slug: string) {
   `;
 
   return sanityFetch<Article>(query, {
-    type: SCHEMA_TYPES.ARTICLE,
     slug,
   });
 }
 
-export async function fetchArticles() {
-  const query = groq`*[${baseArticleQuery}]{ 
+export async function fetchArticles(from: number, to: number) {
+  const query = groq`*[${baseArticleQuery}][${from}...${to}]{ 
       ...,
       category->{
         ...
@@ -35,7 +34,5 @@ export async function fetchArticles() {
     }
   `;
 
-  return sanityFetch<Article[]>(query, {
-    type: SCHEMA_TYPES.ARTICLE,
-  });
+  return sanityFetch<Article[]>(query);
 }
