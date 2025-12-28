@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import type { VariantProps } from "class-variance-authority";
-import { Button, buttonVariants } from "@/src/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { scrollToSection } from "@/src/utilities/scroll-handler";
 
 export default function InteractiveButton({

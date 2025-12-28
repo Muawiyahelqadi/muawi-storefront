@@ -10,7 +10,7 @@ const Footer = async () => {
   }
 
   return (
-    <footer className="pt-4 pb-2.5 bg-[#f8f9fa] border-t border-[#e5e5e5] relative mt-8">
+    <footer className="pt-4 pb-2.5 bg-[#f8f9fa] border-t border-[#e5e5e5] relative">
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="text-center md:text-left">

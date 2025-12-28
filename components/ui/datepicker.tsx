@@ -2,15 +2,15 @@
 
 import * as React from "react";
 import { CalendarIcon } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
-import { Calendar } from "@/src/components/ui/calendar";
-import { Input } from "@/src/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/src/components/ui/popover";
-import useTranslations from "@/src/hook/useTranslations";
+} from "@/components/ui/popover";
+import useTranslate from "@/src/hook/useTranslate";
 import { useLocale } from "use-intl";
 
 interface Props {
@@ -80,7 +80,7 @@ function isDateBlocked(date: Date, blockedDates?: Array<{ date: string }>) {
 }
 
 export function DatePicker(props: Props) {
-  const translate = useTranslations();
+  const translate = useTranslate();
   const locale = useLocale();
   const isArabic = locale === "ar";
 

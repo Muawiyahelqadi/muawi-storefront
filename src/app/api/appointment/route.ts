@@ -17,7 +17,7 @@ const appointmentSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 digits")
     .max(20, "Phone number is too long"),
-  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  email: z.email("Invalid email address").optional().or(z.literal("")),
   message: z.string().max(1000, "Message is too long").optional(),
   honeypot: z.string().max(0).optional(),
 });

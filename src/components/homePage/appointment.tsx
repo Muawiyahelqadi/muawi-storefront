@@ -1,30 +1,35 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Textarea } from "@/src/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/src/components/ui/select";
+} from "@/components/ui/select";
 import { Phone, Loader2 } from "lucide-react";
-import { DatePicker } from "@/src/components/ui/datepicker";
+import { DatePicker } from "@/components/ui/datepicker";
 import { AppointmentSection } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
 import { getImageUrl } from "@/src/utilities/image-builder";
-import { formatPhoneNumber } from "@/src/utilities/utilities";
-import useTranslations from "@/src/hook/useTranslations";
+import {
+  extractPhoneNumber,
+  formatPhoneNumber,
+} from "@/src/utilities/phone-number";
+import useTranslate from "@/src/hook/useTranslate";
 import { isRtlDirection } from "@/src/i18n/utilities";
 import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
+import { PhoneInput } from "@/src/components/ui/phone-input";
+import WhatsappIcon from "@/src/components/icons/whatsapp";
 
 // Validation schema
 const appointmentSchema = z.object({
@@ -35,6 +40,7 @@ const appointmentSchema = z.object({
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name must be less than 100 characters")
     .regex(/^[a-zA-Z\u0600-\u06FF\s'-]+$/, "Name contains invalid characters"),
+  email: z.email("Invalid email address").optional().or(z.literal("")),
   phone: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
@@ -50,7 +56,7 @@ const appointmentSchema = z.object({
 type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
 const Appointment = (props: AppointmentSection) => {
-  const translate = useTranslations();
+  const translate = useTranslate();
   const [isRTL, setIsRTL] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -65,6 +71,7 @@ const Appointment = (props: AppointmentSection) => {
       service: "",
       date: "",
       name: "",
+      email: "",
       phone: "",
       message: "",
     },
@@ -149,17 +156,47 @@ const Appointment = (props: AppointmentSection) => {
                   {props.description}
                 </p>
 
-                {props.phone && (
-                  <div className="flex items-center gap-3 mb-6">
-                    <Phone className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
-                    <a href={`tel:${props.phone}`}>
-                      <p
-                        className="text-muted-foreground hover:text-primary mb-0 text-right"
-                        dir="rtl"
-                      >
-                        <span dir="ltr">{formatPhoneNumber(props.phone)}</span>
-                      </p>
-                    </a>
+                {props.phonesNumber && props.phonesNumber.length > 0 && (
+                  <div className="flex flex-col gap-3 mb-6">
+                    {props.phonesNumber.map((item) => {
+                      if (item._type === "phoneNumber" && !item.number) {
+                        return null;
+                      }
+                      if (item._type === "whatsappLink" && !item.url) {
+                        return null;
+                      }
+
+                      const isWhatsApp = item._type === "whatsappLink";
+
+                      const url = isWhatsApp
+                        ? item.url
+                        : `tel:${extractPhoneNumber(item.number)}`;
+
+                      const displayText = isWhatsApp
+                        ? translate("chat_on_whatsApp") || "Chat on WhatsApp"
+                        : formatPhoneNumber(item.number);
+
+                      return (
+                        <div
+                          className="flex items-center gap-3"
+                          key={item._key}
+                        >
+                          {item._type === "whatsappLink" ? (
+                            <WhatsappIcon className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
+                          ) : (
+                            <Phone className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
+                          )}
+                          <a href={url}>
+                            <p
+                              className="text-muted-foreground hover:text-primary mb-0 text-right"
+                              dir="rtl"
+                            >
+                              <span dir="ltr">{displayText}</span>
+                            </p>
+                          </a>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -245,13 +282,35 @@ const Appointment = (props: AppointmentSection) => {
                       )}
                     </div>
 
-                    {/* Phone Input */}
+                    {/* Email Input - Optional */}
                     <div>
+                      <Controller
+                        name="email"
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            type="email"
+                            placeholder={`${translate("email")} (${translate("optional")})`}
+                            {...field}
+                            className={errors.email ? "border-red-500" : ""}
+                          />
+                        )}
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Phone Input */}
+                    <div className="">
                       <Controller
                         name="phone"
                         control={control}
                         render={({ field }) => (
-                          <Input
+                          <PhoneInput
+                            defaultCountry="PS"
                             type="tel"
                             className={`rtl:text-right ${
                               errors.phone ? "border-red-500" : ""
@@ -261,6 +320,10 @@ const Appointment = (props: AppointmentSection) => {
                           />
                         )}
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {translate("whatsapp_note") ||
+                          "Please provide a phone number with WhatsApp"}
+                      </p>
                       {errors.phone && (
                         <p className="text-red-500 text-sm mt-1">
                           {errors.phone.message}

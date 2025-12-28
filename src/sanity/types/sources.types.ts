@@ -1,6 +1,6 @@
 import { PortableTextBlock } from "@portabletext/types";
 
-export type SanityRichTextSource = string | PortableTextBlock[];
+export type SanityContentBlockSource = string | PortableTextBlock[];
 
 export type SanityCtaSource = {
   _key: string;

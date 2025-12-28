@@ -11,6 +11,6 @@ export async function fetchFooterByType() {
   `;
 
   return sanityFetch<Footer>(query, {
-    type: SCHEMA_TYPES.Footer,
+    type: SCHEMA_TYPES.FOOTER,
   });
 }

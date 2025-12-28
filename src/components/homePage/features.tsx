@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/src/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { FeaturesSection } from "@/src/sanity/types/sections.types";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { hasCta } from "@/src/utilities/utilities";
