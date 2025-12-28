@@ -10,7 +10,6 @@ const Page = async ({ params }: Props) => {
   const { slug } = await params;
   const article = await fetchArticleBySlug(slug);
 
-  console.log("article", article);
   if (!article) {
     return notFound();
   }

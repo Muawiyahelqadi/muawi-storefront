@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Calendar, User, ArrowUpRight } from "lucide-react";
 import { Article } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
@@ -9,6 +9,9 @@ import Link from "next/link";
 import { getUrlByPage } from "@/src/routes";
 import { fetchArticles } from "@/src/sanity/queries/article";
 import useInfiniteScroll from "react-infinite-scroll-hook";
+import useTranslate from "@/src/hook/useTranslate";
+import { isRtlDirection } from "@/src/i18n/utilities";
+import { minReadArabic } from "@/src/utilities/string";
 
 interface ArticleCardsProps {
   initialArticles: Article[];
@@ -19,6 +22,8 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
   initialArticles,
   limit,
 }) => {
+  const translate = useTranslate();
+  const isRtl = isRtlDirection();
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(articles.length >= limit);
@@ -56,12 +61,12 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {articles.map((post, index) => {
-          const url = getUrlByPage("article-details", post.slug.current);
+        {articles.map((article, index) => {
+          const url = getUrlByPage("article-details", article.slug.current);
 
           return (
             <article
-              key={post._id}
+              key={article._id}
               className="group animate-slide-up"
               style={{ animationDelay: `${(index % 9) * 80}ms` }}
             >
@@ -69,15 +74,15 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
                 {/* Image Container */}
                 <div className="relative h-64 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
                   <Image
-                    src={getImageUrl(post.featuredImage)}
-                    alt={post.title}
+                    src={getImageUrl(article.featuredImage)}
+                    alt={article.title}
                     width={1300}
                     height={899}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   {/* Gradient Overlay */}
                   <div
-                    className={`absolute inset-0 bg-gradient-to-t ${post.color} opacity-20 group-hover:opacity-30 transition-opacity duration-500`}
+                    className={`absolute inset-0 bg-gradient-to-t ${article.color} opacity-20 group-hover:opacity-30 transition-opacity duration-500`}
                   />
                 </div>
 
@@ -87,12 +92,12 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
                   <div className="flex items-center gap-4 text-sm text-slate-500">
                     <div className="flex items-center gap-1.5">
                       <User className="w-4 h-4" />
-                      <span className="font-medium">{post.author.name}</span>
+                      <span className="font-medium">{article.author.name}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {new Date(post.publishedAt).toLocaleDateString(
+                        {new Date(article.publishedAt).toLocaleDateString(
                           "en-US",
                           {
                             month: "short",
@@ -108,31 +113,37 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
                     href={url}
                     className="text-2xl font-bold text-slate-900 min-h-[60px] leading-tight group-hover:text-blue-600 transition-colors duration-300 line-clamp-2"
                   >
-                    {post.title}
+                    {article.title}
                   </Link>
 
                   {/* Excerpt */}
                   <p className="text-slate-600 leading-relaxed line-clamp-3 min-h-[78px]">
-                    {post.excerpt}
+                    {article.excerpt}
                   </p>
 
                   {/* Footer */}
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <span className="text-sm font-medium text-slate-500">
-                      {post.readTime} read
+                      {article.readTime}{" "}
+                      {isRtl
+                        ? minReadArabic(article.readTime)
+                        : translate("min_read")}
                     </span>
                     <Link
-                      href={getUrlByPage("article-details", post.slug.current)}
-                      className="flex items-center gap-2 text-blue-600 font-semibold text-sm group-hover:gap-3 transition-all duration-300"
+                      href={getUrlByPage(
+                        "article-details",
+                        article.slug.current,
+                      )}
+                      className="flex rtl:flex-row-reverse items-center gap-2 text-blue-600 font-semibold text-sm group-hover:gap-3 transition-all duration-300"
                     >
-                      Read more
+                      {translate("read_more")}
                       <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>
                   </div>
                 </div>
 
                 {/* Accent bar */}
-                <div className={`h-1 bg-gradient-to-r ${post.color}`} />
+                <div className={`h-1 bg-gradient-to-r ${article.color}`} />
               </div>
             </article>
           );
@@ -144,7 +155,6 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
         {loading && (
           <div className="flex items-center gap-3 text-slate-600">
             <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <span className="font-medium">Loading more articles...</span>
           </div>
         )}
       </div>
