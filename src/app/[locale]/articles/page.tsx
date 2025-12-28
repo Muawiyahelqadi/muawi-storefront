@@ -1,5 +1,6 @@
 import React from "react";
 import { Calendar, User, ArrowUpRight, Bookmark } from "lucide-react";
+import { fetchArticlesListPage } from "@/src/sanity/queries/articles-list";
 
 // Mock blog data
 const blogPosts = [
@@ -113,7 +114,9 @@ const blogPosts = [
   },
 ];
 
-const ArticlesListPage = () => {
+const ArticlesListPage = async () => {
+  const articleList = await fetchArticlesListPage();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-18">
       {/* Decorative elements */}
@@ -126,14 +129,15 @@ const ArticlesListPage = () => {
           <div className="text-center space-y-6 animate-fade-in">
             <div className="inline-block">
               <h1 className="text-6xl md:text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 pb-2">
-                Latest Articles
+                {articleList.title}
               </h1>
-              <div className="h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 rounded-full mt-2 animate-pulse-slow" />
+              <div className="h-2 bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-500 rounded-full mt-2 animate-pulse-slow" />
             </div>
-            <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
-              Thoughts on design, development, and building digital products
-              that people love
-            </p>
+            {articleList.title && (
+              <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
+                {articleList.description}
+              </p>
+            )}
           </div>
         </div>
       </header>

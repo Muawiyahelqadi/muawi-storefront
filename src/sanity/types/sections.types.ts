@@ -149,3 +149,8 @@ export interface Article extends SanityDocument {
   medicalDisclaimer?: boolean;
   relatedArticles?: MiniArticle[];
 }
+
+export interface ArticleList extends SanityDocument {
+  title: string;
+  description: string;
+}
