@@ -10,6 +10,8 @@ import Image from "next/image";
 import ContentBlock from "@/src/components/ui/portableTextComponents";
 import ArticleCard from "@/src/components/article/article-card";
 import { toast } from "sonner";
+import Link from "next/link";
+import { getUrlByPage } from "@/src/routes";
 
 // Animation variants
 const fadeInVariant = {
@@ -67,16 +69,18 @@ export default function ArticleDetailPage({ article }: Props) {
       <nav className="sticky top-0 bg-white/80 backdrop-blur-xl border-b border-slate-200 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <motion.button
-              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors group"
-              whileHover={{ x: -4 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <ChevronLeft className="w-5 h-5" />
-              <span className="font-medium">
-                {translate("back_to_articles")}
-              </span>
-            </motion.button>
+            <Link href={getUrlByPage("articles")}>
+              <motion.div
+                className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors group"
+                whileHover={{ x: -4 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <ChevronLeft className="w-5 h-5" />
+                <span className="font-medium">
+                  {translate("back_to_articles")}
+                </span>
+              </motion.div>
+            </Link>
 
             <div className="flex items-center gap-3">
               <div className="relative">
