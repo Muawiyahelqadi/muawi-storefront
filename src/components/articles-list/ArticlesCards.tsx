@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Calendar, User, ArrowUpRight } from "lucide-react";
 import { Article } from "@/src/sanity/types/sections.types";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { getImageUrl } from "@/src/utilities/image-builder";
 import Link from "next/link";
 import { getUrlByPage } from "@/src/routes";
 import { fetchArticles } from "@/src/sanity/queries/article";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 
 interface ArticleCardsProps {
   initialArticles: Article[];
@@ -20,69 +21,37 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
 }) => {
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(articles.length >= limit);
   const [offset, setOffset] = useState(limit);
-  const loaderRef = useRef<HTMLDivElement>(null);
 
-  // Load more articles from API
-  const loadMoreArticles = async () => {
-    if (loading || !hasMore) {
+  const loadMoreArticles = useCallback(async () => {
+    if (loading) {
       return;
     }
 
     setLoading(true);
+
     try {
-      console.log({
-        from: offset,
-        to: offset + limit,
-      });
       const newArticles = await fetchArticles(offset, offset + limit);
 
-      if (newArticles && newArticles.length > 0) {
-        setArticles((prev) => [...prev, ...newArticles]);
-        setOffset((prev) => prev + limit);
-        // If we got fewer articles than requested, we've reached the end
-        if (newArticles.length < limit) {
-          setHasMore(false);
-        }
-      } else {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error("Error loading more articles:", error);
-      setHasMore(false);
+      setArticles((prev) => {
+        const all = [...prev, ...newArticles];
+        return Array.from(new Map(all.map((s) => [s._id, s])).values());
+      });
+      setHasMore(newArticles.length >= limit);
+      setOffset((prev) => prev + limit);
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, loading]);
 
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && hasMore && !loading) {
-          loadMoreArticles();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "200px",
-        threshold: 0.1,
-      },
-    );
-
-    const currentLoader = loaderRef.current;
-    if (currentLoader) {
-      observer.observe(currentLoader);
-    }
-
-    return () => {
-      if (currentLoader) {
-        observer.unobserve(currentLoader);
-      }
-    };
-  }, []);
+  const [loaderRef] = useInfiniteScroll({
+    loading: loading,
+    hasNextPage: hasMore,
+    onLoadMore: loadMoreArticles,
+    disabled: false,
+    rootMargin: "0px 0px 200px 0px",
+  });
 
   return (
     <>
@@ -137,13 +106,13 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
                   {/* Title */}
                   <Link
                     href={url}
-                    className="text-2xl font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors duration-300 line-clamp-2"
+                    className="text-2xl font-bold text-slate-900 min-h-[60px] leading-tight group-hover:text-blue-600 transition-colors duration-300 line-clamp-2"
                   >
                     {post.title}
                   </Link>
 
                   {/* Excerpt */}
-                  <p className="text-slate-600 leading-relaxed line-clamp-3">
+                  <p className="text-slate-600 leading-relaxed line-clamp-3 min-h-[78px]">
                     {post.excerpt}
                   </p>
 
