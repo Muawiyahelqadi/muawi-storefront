@@ -19,9 +19,11 @@ const ArticlesListPage = async () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center space-y-6 animate-fade-in">
             <div className="inline-block">
-              <h1 className="text-6xl md:text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 pb-2">
-                {content.title}
-              </h1>
+              {content.title && (
+                <h1 className="text-6xl md:text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 pb-2">
+                  {content.title}
+                </h1>
+              )}
               <div className="h-2 bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-500 rounded-full mt-2 animate-pulse-slow" />
             </div>
             {content.description && (

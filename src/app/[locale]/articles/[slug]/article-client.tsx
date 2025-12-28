@@ -12,6 +12,8 @@ import ArticleCard from "@/src/components/article/article-card";
 import { toast } from "sonner";
 import Link from "next/link";
 import { getUrlByPage } from "@/src/routes";
+import { minReadArabic } from "@/src/utilities/string";
+import { isRtlDirection } from "@/src/i18n/utilities";
 
 // Animation variants
 const fadeInVariant = {
@@ -30,6 +32,7 @@ interface Props {
 
 export default function ArticleDetailPage({ article }: Props) {
   const translate = useTranslate();
+  const isRtl = isRtlDirection();
   const [readProgress, setReadProgress] = useState(0);
 
   useEffect(() => {
@@ -53,7 +56,6 @@ export default function ArticleDetailPage({ article }: Props) {
     });
   };
 
-  console.log({ article });
   return (
     <div className="min-h-screen bg-white pt-18">
       {/* Reading Progress Bar */}
@@ -159,7 +161,10 @@ export default function ArticleDetailPage({ article }: Props) {
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-teal-500" />
               <span className="font-medium">
-                {article.readTime} {translate("min_read")}
+                {article.readTime}
+                {isRtl
+                  ? minReadArabic(article.readTime)
+                  : translate("min_read")}
               </span>
             </div>
           </motion.div>
@@ -181,10 +186,11 @@ export default function ArticleDetailPage({ article }: Props) {
             />
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
+                {isRtl && <User className="w-4 h-4 text-teal-600" />}
                 <h3 className="font-bold text-slate-900 text-lg mb-0">
                   {article.author.name}
                 </h3>
-                <User className="w-4 h-4 text-teal-600" />
+                {!isRtl && <User className="w-4 h-4 text-teal-600" />}
               </div>
               <p className="text-sm text-teal-700 font-medium mb-2">
                 {article.author.title}
