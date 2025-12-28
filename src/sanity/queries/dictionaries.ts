@@ -20,7 +20,7 @@ async function fetchDictionary(locale: string) {
   const data = await client.fetch<Wire>(
     messagesQuery(locale),
     {
-      type: SCHEMA_TYPES.Dictionaries,
+      type: SCHEMA_TYPES.DICTIONARIES,
     },
     { next: { revalidate: 0.5 } }, // revalidate every 5 minutes
   );

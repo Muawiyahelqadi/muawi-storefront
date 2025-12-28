@@ -11,6 +11,6 @@ export async function fetchHeaderByType() {
   `;
 
   return sanityFetch<Header>(query, {
-    type: SCHEMA_TYPES.Header,
+    type: SCHEMA_TYPES.HEADER,
   });
 }

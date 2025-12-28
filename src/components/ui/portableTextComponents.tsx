@@ -3,11 +3,11 @@ import Link from "next/link";
 import React from "react";
 import { PortableTextBlock } from "@portabletext/types";
 import { cn } from "@/lib/utils";
-import { SanityRichTextSource } from "@/src/sanity/types/sources.types";
+import { SanityContentBlockSource } from "@/src/sanity/types/sources.types";
 
 interface ContentBlockProps {
   className?: string;
-  children: SanityRichTextSource;
+  children: SanityContentBlockSource;
 }
 
 export const components: PortableTextComponents = {

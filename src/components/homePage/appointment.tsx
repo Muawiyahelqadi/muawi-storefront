@@ -21,7 +21,7 @@ import {
   extractPhoneNumber,
   formatPhoneNumber,
 } from "@/src/utilities/phone-number";
-import useTranslations from "@/src/hook/useTranslations";
+import useTranslate from "@/src/hook/useTranslate";
 import { isRtlDirection } from "@/src/i18n/utilities";
 import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
@@ -56,7 +56,7 @@ const appointmentSchema = z.object({
 type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
 const Appointment = (props: AppointmentSection) => {
-  const translate = useTranslations();
+  const translate = useTranslate();
   const [isRTL, setIsRTL] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

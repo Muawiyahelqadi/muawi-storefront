@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import useTranslations from "@/src/hook/useTranslations";
+import useTranslate from "@/src/hook/useTranslate";
 import { useLocale } from "use-intl";
 
 interface Props {
@@ -80,7 +80,7 @@ function isDateBlocked(date: Date, blockedDates?: Array<{ date: string }>) {
 }
 
 export function DatePicker(props: Props) {
-  const translate = useTranslations();
+  const translate = useTranslate();
   const locale = useLocale();
   const isArabic = locale === "ar";
 

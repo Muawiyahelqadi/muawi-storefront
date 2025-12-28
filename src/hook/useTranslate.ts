@@ -6,7 +6,7 @@ import {
 import { useCallback } from "react";
 import { camelToDisplayText } from "@/src/utilities/string";
 
-export function useTranslations() {
+export function useTranslate() {
   // Pass empty string or undefined to use root namespace
   const t = useIntlTranslations("common");
 
@@ -23,9 +23,9 @@ export function useTranslations() {
   );
 }
 
-export const getTranslations = async () => {
+export const getTranslate = async () => {
   const locale = await getLocale();
   return await getIntlTranslations({ locale, namespace: "common" });
 };
 
-export default useTranslations;
+export default useTranslate;

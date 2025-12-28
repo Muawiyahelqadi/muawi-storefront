@@ -1,8 +1,9 @@
 export const SCHEMA_TYPES = {
   HOME_PAGE: "homePage",
-  Header: "header",
-  Footer: "footer",
-  Dictionaries: "dictionaries",
+  HEADER: "header",
+  FOOTER: "footer",
+  ARTICLE: "article",
+  DICTIONARIES: "dictionaries",
 } as const;
 
 export type SchemaType = (typeof SCHEMA_TYPES)[keyof typeof SCHEMA_TYPES];
