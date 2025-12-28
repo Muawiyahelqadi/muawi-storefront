@@ -1,8 +1,0 @@
-NEXT_PUBLIC_SANITY_PROJECT_ID="5qsanux4"
-NEXT_PUBLIC_SANITY_DATASET="production"
-NEXT_PUBLIC_SANITY_API_VERSION="2025-012-13"
-
-# Email
-RESEND_API_KEY=re_Gqgf7gsC_MJZPjd1sCMJdnde8GLmXyqbv
-APPOINTMENT_EMAIL_FROM="Appointments <onboarding@resend.dev>"
-APPOINTMENT_EMAIL_TO=suhaib.m.baba@gmail.com
