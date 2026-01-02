@@ -9,6 +9,7 @@ import { getImageUrl } from "@/src/utilities/image-builder";
 import { scrollToSection } from "@/src/utilities/scroll-handler";
 import { useEffect } from "react";
 import { useLocale } from "use-intl";
+import MobileMenu from "@/src/components/menu";
 
 const isRelativeLink = (url?: string) => {
   return url?.startsWith("#");
@@ -32,6 +33,7 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
     e: React.MouseEvent<HTMLAnchorElement>,
     url?: string,
   ) => {
+    debugger;
     if (isHomePage && isRelativeLink(url)) {
       // On home page with anchor link - use smooth scroll
       e.preventDefault();
@@ -39,6 +41,11 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
     } else if (url && isRelativeLink(url)) {
       e.preventDefault();
       router.push("/" + url, {
+        scroll: true,
+      });
+    } else if (url) {
+      e.preventDefault();
+      router.push(url, {
         scroll: true,
       });
     }
@@ -89,6 +96,10 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
               </li>
             ))}
           </ul>
+          <MobileMenu
+            menuItems={menuItems}
+            onNavigate={(e, item) => handleLinkClick(e, item.url)}
+          />
         </div>
       </nav>
     </header>
