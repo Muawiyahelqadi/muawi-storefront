@@ -10,6 +10,7 @@ import { scrollToSection } from "@/src/utilities/scroll-handler";
 import { useEffect } from "react";
 import { useLocale } from "use-intl";
 import MobileMenu from "@/src/components/menu";
+import LanguageSwitcher from "@/src/components/ui/LanguageSwitcher";
 
 const isRelativeLink = (url?: string) => {
   return url?.startsWith("#");
@@ -33,7 +34,6 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
     e: React.MouseEvent<HTMLAnchorElement>,
     url?: string,
   ) => {
-    debugger;
     if (isHomePage && isRelativeLink(url)) {
       // On home page with anchor link - use smooth scroll
       e.preventDefault();
@@ -75,31 +75,34 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
             </div>
             {title && <p className="text-xl font-semibold">{title}</p>}
           </Link>
-          <ul className="hidden lg:flex items-center gap-8 ms-auto">
-            {menuItems?.map((link) => (
-              <li key={link.url}>
-                <Link
-                  href={link.url}
-                  onClick={(e) => handleLinkClick(e, link.url)}
-                  className={cn(
-                    "font-bold transition-colors relative pb-2 group text-gray-500 hover:text-blue-600",
-                  )}
-                >
-                  {link.title}
-                  <span
+          <div className="flex items-center gap-2 lg:gap-4">
+            <ul className="hidden lg:flex items-center gap-8 ms-auto">
+              {menuItems?.map((link) => (
+                <li key={link.url}>
+                  <Link
+                    href={link.url}
+                    onClick={(e) => handleLinkClick(e, link.url)}
                     className={cn(
-                      "absolute bottom-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out",
-                      "ltr:left-0 ltr:origin-left rtl:right-0 rtl:origin-right w-0 group-hover:w-full",
+                      "font-bold transition-colors relative pb-2 group text-gray-500 hover:text-blue-600",
                     )}
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <MobileMenu
-            menuItems={menuItems}
-            onNavigate={(e, item) => handleLinkClick(e, item.url)}
-          />
+                  >
+                    {link.title}
+                    <span
+                      className={cn(
+                        "absolute bottom-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out",
+                        "ltr:left-0 ltr:origin-left rtl:right-0 rtl:origin-right w-0 group-hover:w-full",
+                      )}
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <MobileMenu
+              menuItems={menuItems}
+              onNavigate={(e, item) => handleLinkClick(e, item.url)}
+            />
+            <LanguageSwitcher />
+          </div>
         </div>
       </nav>
     </header>

@@ -271,8 +271,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Email sent successfully:", emailData?.id);
-
     return NextResponse.json(
       {
         success: true,
