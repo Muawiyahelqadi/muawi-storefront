@@ -1,7 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
-import { Menu, ChevronRight } from "lucide-react";
+import { Menu, ChevronRight, ChevronLeft } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { isRtlDirection } from "@/src/i18n/utilities";
 
 export interface MenuItem {
   /** Display label for the menu item */
@@ -17,16 +20,14 @@ export interface MobileMenuProps {
   onNavigate?: (e: React.MouseEvent<any>, item: MenuItem) => void;
   /** Additional CSS classes for the trigger button */
   triggerClassName?: string;
-  /** Side from which the sheet slides - default is 'left' */
-  side?: "left" | "right" | "top" | "bottom";
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
   menuItems = [],
   onNavigate,
   triggerClassName = "",
-  side = "left",
 }) => {
+  const isRtl = isRtlDirection() as boolean;
   const [open, setOpen] = useState<boolean>(false);
 
   const handleNavigation = (e: React.MouseEvent<any>, item: MenuItem): void => {
@@ -49,7 +50,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
       </SheetTrigger>
 
       <SheetContent
-        side={side}
+        side={isRtl ? "right" : "left"}
         className="w-[300px] sm:w-[350px] bg-white border-slate-800 p-0"
       >
         {/* Navigation Links */}
@@ -68,7 +69,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 <div className="flex items-center gap-4">
                   <span className="font-medium text-base">{item.title}</span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
+                {isRtl ? (
+                  <ChevronLeft className="h-5 w-5 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
+                ) : (
+                  <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
+                )}
               </button>
             );
           })}
