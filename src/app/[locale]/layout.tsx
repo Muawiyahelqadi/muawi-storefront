@@ -8,6 +8,7 @@ import { client } from "@/src/sanity/lib/client";
 import { getLocale } from "next-intl/server";
 import { isRtlDirection } from "@/src/i18n/utilities";
 import { Toaster } from "@/components/ui/sonner";
+import SessionProvider from "@/src/components/SessionProvider/SessionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,10 +41,12 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster />
+          <SessionProvider>
+            <Header />
+            {children}
+            <Footer />
+            <Toaster />
+          </SessionProvider>
         </NextIntlClientProvider>
       </body>
     </html>
