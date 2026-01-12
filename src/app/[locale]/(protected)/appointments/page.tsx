@@ -1,14 +1,16 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/src/app/api/auth/[...nextauth]/route";
-import DashboardClient from "./DashboardClient";
+import AppointmentsClient from "@/src/app/[locale]/(protected)/appointments/AppointmentsClient";
+import { fetchAppointmentPageByType } from "@/src/sanity/queries/appointment";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-
   if (!session) {
     redirect("/signIn");
   }
 
-  return <DashboardClient session={session} />;
+  const appointments = await fetchAppointmentPageByType();
+
+  return <AppointmentsClient appointments={appointments} />;
 }

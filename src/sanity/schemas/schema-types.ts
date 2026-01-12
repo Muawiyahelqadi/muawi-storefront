@@ -5,6 +5,7 @@ export const SCHEMA_TYPES = {
   ARTICLE: "article",
   ARTICLES_LIST: "articlesList",
   DICTIONARIES: "dictionaries",
+  Appointment: "appointmentPage",
 } as const;
 
 export type SchemaType = (typeof SCHEMA_TYPES)[keyof typeof SCHEMA_TYPES];

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
+import { client } from "@/src/sanity/lib/client";
+import { SCHEMA_TYPES } from "@/src/sanity/schemas/schema-types";
 
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -216,6 +218,7 @@ const generateEmailHTML = (data: {
 // API Route Handler
 export async function POST(request: NextRequest) {
   try {
+    debugger;
     // Rate limiting
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -254,8 +257,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Save appointment to Sanity
+    let sanityAppointment;
+    try {
+      sanityAppointment = await client.create({
+        _type: SCHEMA_TYPES.Appointment,
+        service: data.service,
+        date: data.date,
+        name: data.name,
+        phone: data.phone,
+        email: data.email || undefined,
+        message: data.message || undefined,
+        status: "pending", // Default status
+        createdAt: new Date().toISOString(),
+        submittedFrom: ip,
+      });
+
+      console.log("Appointment saved to Sanity:", sanityAppointment._id);
+    } catch (sanityError) {
+      console.log("Failed to save to Sanity:", sanityError);
+      return NextResponse.json(
+        { error: "Failed to add Appointment" },
+        { status: 500 },
+      );
+    }
+
     // Send email with Resend
-    const { data: emailData, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: process.env.APPOINTMENT_EMAIL_FROM!,
       to: process.env.APPOINTMENT_EMAIL_TO!,
       subject: `New Appointment: ${data.service} - ${data.name}`,
@@ -275,6 +303,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: "Appointment request submitted successfully",
+        appointmentId: sanityAppointment?._id,
       },
       { status: 200 },
     );
