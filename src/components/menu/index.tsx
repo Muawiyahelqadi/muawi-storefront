@@ -5,6 +5,7 @@ import { Menu, ChevronRight, ChevronLeft } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { isRtlDirection } from "@/src/i18n/utilities";
+import { useLocale } from "use-intl";
 
 export interface MenuItem {
   /** Display label for the menu item */
@@ -27,12 +28,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onNavigate,
   triggerClassName = "",
 }) => {
-  const isRtl = isRtlDirection() as boolean;
+  const locale = useLocale();
+  const isRtl = isRtlDirection(locale) as boolean;
   const [open, setOpen] = useState<boolean>(false);
 
   const handleNavigation = (e: React.MouseEvent<any>, item: MenuItem): void => {
     setOpen(false);
-
     onNavigate?.(e, item);
   };
 
