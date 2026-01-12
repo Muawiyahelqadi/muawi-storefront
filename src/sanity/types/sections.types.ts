@@ -154,3 +154,18 @@ export interface ArticleList extends SanityDocument {
   title: string;
   description: string;
 }
+
+export interface Appointment extends SanityDocument {
+  _id: string;
+  name: string;
+  service: string;
+  date: string;
+  phone: string;
+  email?: string;
+  message?: string;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  createdAt: string;
+  notes?: string;
+  timeSpent?: string;
+  expectedPaymentAmount?: string;
+}

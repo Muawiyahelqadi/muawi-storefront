@@ -12,6 +12,10 @@ export const isRtlDirection = (locale?: string): boolean | Promise<boolean> => {
 
   // Server-side: return promise
   return (async () => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.dir === "rtl";
+    }
+
     const currentLocale = locale ?? (await getLocale());
     return RTL_LOCALES.includes(currentLocale);
   })();
