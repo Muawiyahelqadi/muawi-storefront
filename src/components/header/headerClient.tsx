@@ -9,19 +9,18 @@ import { getImageUrl } from "@/src/utilities/image-builder";
 import { scrollToSection } from "@/src/utilities/scroll-handler";
 import { useEffect } from "react";
 import { useLocale } from "use-intl";
-import MobileMenu from "@/src/components/menu";
 import LanguageSwitcher from "@/src/components/ui/LanguageSwitcher";
+import { Icon } from "@iconify/react";
 
 const isRelativeLink = (url?: string) => {
   return url?.startsWith("#");
 };
 
-const HeaderClient = ({ title, logo, menuItems }: Header) => {
+const HeaderClient = ({ logo, menuItems }: Header) => {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
 
-  // Check if we're on the home page
   const isHomePage = pathname === "/" || pathname === `/${locale}`;
 
   useEffect(() => {
@@ -35,77 +34,56 @@ const HeaderClient = ({ title, logo, menuItems }: Header) => {
     url?: string,
   ) => {
     if (isHomePage && isRelativeLink(url)) {
-      // On home page with anchor link - use smooth scroll
       e.preventDefault();
       scrollToSection(url);
     } else if (url && isRelativeLink(url)) {
       e.preventDefault();
-      router.push("/" + url, {
-        scroll: true,
-      });
+      router.push("/" + url, { scroll: true });
     } else if (url) {
       e.preventDefault();
-      router.push(url, {
-        scroll: true,
-      });
+      router.push(url, { scroll: true });
     }
-    // For all other cases (page links or hash links from other pages),
-    // let Next.js Link handle navigation naturally
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-50 transition-all pt-2">
-      <nav className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link
-            href="/"
-            className="flex items-center gap-2 group"
-            aria-label={title}
-          >
-            <div className="relative max-h-[60px] max-w-[200px]">
-              {logo && (
+    <>
+      <div className="absolute top-8 left-0 right-0 z-50">
+        <div className="container mx-auto max-w-7xl px-4 py-2 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            {logo && (
+              <div className="relative max-h-11 max-w-[150px]">
                 <Image
                   src={getImageUrl(logo)}
-                  alt={title || ""}
-                  width={60}
-                  height={60}
+                  alt={"Logo"}
+                  width={44}
+                  height={44}
                   className="w-auto h-auto object-contain transition-transform group-hover:scale-105"
                 />
-              )}
-            </div>
-            {title && <p className="text-xl font-semibold">{title}</p>}
+              </div>
+            )}
           </Link>
-          <div className="flex items-center gap-2 lg:gap-4">
-            <ul className="hidden lg:flex items-center gap-8 ms-auto">
-              {menuItems?.map((link) => (
-                <li key={link.url}>
-                  <Link
-                    href={link.url}
-                    onClick={(e) => handleLinkClick(e, link.url)}
-                    className={cn(
-                      "font-bold transition-colors relative pb-2 group text-gray-500 hover:text-blue-600",
-                    )}
-                  >
-                    {link.title}
-                    <span
-                      className={cn(
-                        "absolute bottom-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out",
-                        "ltr:left-0 ltr:origin-left rtl:right-0 rtl:origin-right w-0 group-hover:w-full",
-                      )}
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <MobileMenu
-              menuItems={menuItems}
-              onNavigate={(e, item) => handleLinkClick(e, item.url)}
-            />
-            <LanguageSwitcher />
-          </div>
+          <LanguageSwitcher />
         </div>
+      </div>
+      <nav className="fixed bottom-8 lg:top-8 lg:bottom-auto  left-1/2 -translate-x-1/2 z-50 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
+        <ul className="flex items-center justify-around px-4 py-2 h-14 gap-8">
+          {menuItems?.map((link) => (
+            <li key={link.url}>
+              <Link
+                href={link.url}
+                onClick={(e) => handleLinkClick(e, link.url)}
+                className={cn(
+                  "font-bold text-sm transition-colors text-gray-500 hover:text-blue-600 px-2 py-1",
+                )}
+              >
+                <span className="hidden lg:block">{link.title}</span>
+                <Icon icon={link.icon} className="w-8 h-8 lg:hidden" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
-    </header>
+    </>
   );
 };
 

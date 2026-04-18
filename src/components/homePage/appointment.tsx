@@ -157,7 +157,7 @@ const Appointment = (props: AppointmentSection) => {
                 </p>
 
                 {props.phonesNumber && props.phonesNumber.length > 0 && (
-                  <div className="flex flex-col gap-3 mb-6">
+                  <div className="flex flex-col gap-4 mb-6">
                     {props.phonesNumber.map((item) => {
                       if (item._type === "phoneNumber" && !item.number) {
                         return null;
@@ -182,9 +182,9 @@ const Appointment = (props: AppointmentSection) => {
                           key={item._key}
                         >
                           {item._type === "whatsappLink" ? (
-                            <WhatsappIcon className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
+                            <WhatsappIcon className="w-5 h-5 text-muted-foreground rtl:rotate-270" />
                           ) : (
-                            <Phone className="w-6 h-6 text-muted-foreground rtl:rotate-270" />
+                            <Phone className="w-5 h-5 text-muted-foreground rtl:rotate-270" />
                           )}
                           <a href={url}>
                             <p
