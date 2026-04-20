@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Phone } from "lucide-react";
-import { Appointment } from "@/src/app/[locale]/(protected)/appointments/types";
-import { statusConfig } from "@/src/app/[locale]/(protected)/appointments/constants";
+import { Appointment } from "@/src/components/admin/appointments/types";
+import { statusConfig } from "@/src/components/admin/appointments/constants";
 import { formatDate } from "@/src/utilities/date";
 import { useLocale } from "use-intl";
 import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";

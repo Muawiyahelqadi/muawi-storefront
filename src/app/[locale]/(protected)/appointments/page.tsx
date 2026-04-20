@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/src/app/api/auth/[...nextauth]/route";
-import AppointmentsClient from "@/src/app/[locale]/(protected)/appointments/AppointmentsClient";
+import AppointmentsClient from "@/src/components/admin/appointments/AppointmentsClient";
 import { fetchAppointmentPageByType } from "@/src/sanity/queries/appointment";
 
 export default async function AppointmentsPage() {

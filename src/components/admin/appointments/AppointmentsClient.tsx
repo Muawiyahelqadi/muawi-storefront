@@ -6,12 +6,12 @@ import {
   AppointmentsPageProps,
   Appointment,
   StatusCounts,
-} from "@/src/app/[locale]/(protected)/appointments/types";
-import FilterTabs from "@/src/app/[locale]/(protected)/appointments/FilterTabs";
-import SearchBar from "@/src/app/[locale]/(protected)/appointments/SearchBar";
-import EmptyState from "@/src/app/[locale]/(protected)/appointments/EmptyState";
-import AppointmentCard from "@/src/app/[locale]/(protected)/appointments/AppointmentCard";
-import AppointmentDetailsDialog from "@/src/app/[locale]/(protected)/appointments/AppointmentDetailsDialog";
+} from "@/src/components/admin/appointments/types";
+import FilterTabs from "@/src/components/admin/appointments/FilterTabs";
+import SearchBar from "@/src/components/admin/appointments/SearchBar";
+import EmptyState from "@/src/components/admin/appointments/EmptyState";
+import AppointmentCard from "@/src/components/admin/appointments/AppointmentCard";
+import AppointmentDetailsDialog from "@/src/components/admin/appointments/AppointmentDetailsDialog";
 
 export default function AppointmentsClient({
   appointments,
@@ -61,7 +61,9 @@ export default function AppointmentsClient({
       <div className="container max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">{translate("appointments")}</h1>
+          <h1 className="text-4xl font-bold tracking-tight">
+            {translate("appointments")}
+          </h1>
           <p className="text-muted-foreground mt-2">
             {translate("manage_customer_bookings")}
           </p>

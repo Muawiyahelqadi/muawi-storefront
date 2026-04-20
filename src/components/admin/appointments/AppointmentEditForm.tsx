@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Save, X } from "lucide-react";
-import { Appointment } from "@/src/app/[locale]/(protected)/appointments/types";
+import { Appointment } from "@/src/components/admin/appointments/types";
 import { DatePicker } from "@/components/ui/datepicker";
 import React from "react";
 import useTranslate from "@/src/i18n/useTranslate";

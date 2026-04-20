@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Edit2 } from "lucide-react";
 import { client } from "@/src/sanity/lib/client";
 import { toast } from "sonner";
-import { Appointment } from "@/src/app/[locale]/(protected)/appointments/types";
+import { Appointment } from "@/src/components/admin/appointments/types";
 import AppointmentViewMode from "./AppointmentViewMode";
 import AppointmentEditForm from "./AppointmentEditForm";
 import { formatDate } from "@/src/utilities/date";

@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { StatusCounts } from "@/src/app/[locale]/(protected)/appointments/types";
+import { StatusCounts } from "@/src/components/admin/appointments/types";
 import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
 import { useLocale } from "use-intl";
 
