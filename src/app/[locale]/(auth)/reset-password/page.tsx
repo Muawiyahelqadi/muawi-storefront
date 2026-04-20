@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import useTranslate from "@/src/i18n/useTranslate";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const translate = useTranslate();
+
   const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -24,10 +30,10 @@ export default function ResetPasswordPage() {
 
     const data = await res.json();
     if (res.ok) {
-      setMessage("Password reset! Redirecting to Sign In...");
+      setMessage(translate("reset_password_success"));
       setTimeout(() => router.push("/signIn"), 2000);
     } else {
-      setError(data.error || "Something went wrong.");
+      setError(data.error || translate("something_went_wrong"));
     }
     setLoading(false);
   };
@@ -36,7 +42,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">Reset Password</h1>
+          <h2>{translate("reset_password_title")}</h2>
         </div>
         <form onSubmit={handleSubmit} className="space-y-5">
           {message && (
@@ -51,26 +57,19 @@ export default function ResetPasswordPage() {
           )}
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              New Password
-            </label>
-            <input
+            <Label>{translate("new_password")}</Label>
+            <Input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="••••••••"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-60"
-          >
-            {loading ? "Resetting..." : "Reset Password"}
-          </button>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? translate("resetting") : translate("reset_password")}
+          </Button>
         </form>
       </div>
     </div>

@@ -4,9 +4,14 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useTranslate from "@/src/i18n/useTranslate";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
   const router = useRouter();
+  const translate = useTranslate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -33,7 +38,7 @@ export default function LoginPage() {
         router.refresh();
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      setError(translate("sign_in_error"));
     } finally {
       setLoading(false);
     }
@@ -52,8 +57,8 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your account</p>
+            <h2>{translate("sign_in_welcome")}</h2>
+            <p className="text-gray-600">{translate("sign_in_subtitle")}</p>
           </div>
 
           {/* Form */}
@@ -67,61 +72,42 @@ export default function LoginPage() {
 
             {/* Email Input */}
             <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <input
+              <Label htmlFor="email">{translate("email")}</Label>
+              <Input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 outline-none"
                 placeholder="you@example.com"
               />
             </div>
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
+              <Label htmlFor="password">{translate("password")}</Label>
+              <Input
                 type="password"
                 id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 outline-none"
                 placeholder="••••••••"
               />
 
-              <div className="text-center text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="text-blue-600 hover:underline"
-                >
-                  Forgot your password?
+              <div className="text-sm mt-2">
+                <Link href="/forgot-password">
+                  {translate("forgot_password")}
                 </Link>
               </div>
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? translate("signing_in") : translate("sign_in")}
+            </Button>
           </form>
         </div>
       </div>

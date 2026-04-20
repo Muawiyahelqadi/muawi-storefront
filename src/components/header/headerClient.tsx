@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useLocale } from "use-intl";
 import LanguageSwitcher from "@/src/components/ui/LanguageSwitcher";
 import { Icon } from "@iconify/react";
+import { LogoutButton } from "@/src/components/auth/LogoutButton";
 
 const isRelativeLink = (url?: string) => {
   return url?.startsWith("#");
@@ -62,7 +63,10 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
               </div>
             )}
           </Link>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <LogoutButton />
+          </div>
         </div>
       </div>
       <nav className="fixed bottom-4 lg:top-8 lg:bottom-auto  left-1/2 -translate-x-1/2 z-30 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">

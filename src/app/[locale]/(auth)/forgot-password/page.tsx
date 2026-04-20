@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import useTranslate from "@/src/i18n/useTranslate";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function ForgotPasswordPage() {
+  const translate = useTranslate();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -23,9 +28,9 @@ export default function ForgotPasswordPage() {
 
     const data = await res.json();
     if (res.ok) {
-      setMessage("Check your email for a reset link.");
+      setMessage(translate("forgot_password_success"));
     } else {
-      setError(data.error || "Something went wrong.");
+      setError(data.error || translate("something_went_wrong"));
     }
 
     setLoading(false);
@@ -35,8 +40,10 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">Forgot Password</h1>
-          <p className="text-gray-600">We'll send you a reset link</p>
+          <h2>{translate("forgot_password_title")}</h2>
+          <p className="text-gray-600">
+            {translate("forgot_password_subtitle")}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -52,35 +59,23 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
+            <Label htmlFor="email">{translate("email")}</Label>
+            <Input
               type="email"
               id="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               placeholder="you@example.com"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-60"
-          >
-            {loading ? "Sending..." : "Send Reset Link"}
-          </button>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? translate("sending") : translate("send_reset_link")}
+          </Button>
 
-          <div className="text-center text-sm">
-            <Link href="/signIn" className="text-blue-600 hover:underline">
-              Back to Sign In
-            </Link>
+          <div className="text-sm mt-2">
+            <Link href="/signIn">{translate("back_to_sign_in")}</Link>
           </div>
         </form>
       </div>
