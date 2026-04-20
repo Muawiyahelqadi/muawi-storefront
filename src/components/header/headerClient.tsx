@@ -73,11 +73,11 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
                 href={link.url}
                 onClick={(e) => handleLinkClick(e, link.url)}
                 className={cn(
-                  "font-bold text-sm transition-colors text-gray-500 hover:text-blue-600 px-2 py-1",
+                  "transition-colors text-gray-500 hover:text-blue-600 px-2 py-1",
                 )}
               >
-                <span className="hidden lg:block">{link.title}</span>
-                <Icon icon={link.icon} className="w-8 h-8 lg:hidden" />
+                <span className="text-sm hidden lg:block">{link.title}</span>
+                <Icon icon={link.icon} className="w-6 h-6 lg:hidden" />
               </Link>
             </li>
           ))}
