@@ -55,7 +55,8 @@ export default function AppointmentsClient({
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background px-4 pb-4 pt-26 md:px-8 md:pb-8">
+      {" "}
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div>
