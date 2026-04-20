@@ -45,8 +45,7 @@ export async function POST(req: Request) {
 
     const { error } = await resend.emails.send({
       from: process.env.APPOINTMENT_EMAIL_FROM!,
-      to: process.env.APPOINTMENT_EMAIL_TO!,
-      // to: email,
+      to: email,
       subject: "Reset your password",
       html: `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">

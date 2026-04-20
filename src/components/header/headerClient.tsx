@@ -55,8 +55,8 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
                 <Image
                   src={getImageUrl(logo)}
                   alt={"Logo"}
-                  width={44}
-                  height={44}
+                  width={400}
+                  height={400}
                   className="w-auto h-auto object-contain transition-transform group-hover:scale-105"
                 />
               </div>
