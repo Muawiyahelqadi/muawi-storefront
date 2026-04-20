@@ -11,7 +11,7 @@ export async function sanityFetch<T>(
 ): Promise<T> {
   const {
     tags = [],
-    revalidate = 300,
+    revalidate = 100,
     useCdn = true,
     perspective = "published",
     ...params
