@@ -97,7 +97,7 @@ export default function AppointmentDetailsDialog({
 
   return (
     <Dialog open={!!appointment} onOpenChange={handleCloseDialog}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pt-5">
           <div className="flex items-start justify-between">
             <div>

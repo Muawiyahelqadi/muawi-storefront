@@ -47,7 +47,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
 
   return (
     <>
-      <div className="absolute top-8 left-0 right-0 z-50">
+      <div className="absolute top-8 left-0 right-0 z-10">
         <div className="container mx-auto max-w-7xl px-4 py-2 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             {logo && (
@@ -65,7 +65,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
           <LanguageSwitcher />
         </div>
       </div>
-      <nav className="fixed bottom-4 lg:top-8 lg:bottom-auto  left-1/2 -translate-x-1/2 z-50 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
+      <nav className="fixed bottom-4 lg:top-8 lg:bottom-auto  left-1/2 -translate-x-1/2 z-30 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
         <ul className="flex items-center justify-around px-4 py-2 h-14 gap-8">
           {menuItems?.map((link) => (
             <li key={link.url}>
