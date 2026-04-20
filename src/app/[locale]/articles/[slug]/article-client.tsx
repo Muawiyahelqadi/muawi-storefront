@@ -57,7 +57,7 @@ export default function ArticleDetailPage({ article }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-white pt-18">
+    <div className="min-h-screen bg-white pt-8">
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-slate-100 z-50">
         <motion.div

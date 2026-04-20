@@ -3,9 +3,9 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServicesSection } from "@/src/sanity/types/sections.types";
-import { DynamicIcon } from "lucide-react/dynamic";
 import AnimatedSection from "@/src/components/ui/animatedSection";
 import { motion } from "framer-motion";
+import { Icon } from "@iconify/react";
 
 const Services = (props: ServicesSection) => {
   return (
@@ -73,11 +73,11 @@ const Services = (props: ServicesSection) => {
               }}
               transition={{ duration: 1.5 }}
             >
-              <Card className="mb-4 hover:shadow-lg transition-shadow h-full">
+              <Card className="mb-4 hover:shadow-lg h-full transition-shadow bg-white/65 border-0">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4 mb-3">
-                    <DynamicIcon
-                      name={service.iconName}
+                    <Icon
+                      icon={service.icon}
                       className="w-12 h-12 text-[#3364db]"
                     />
                     <h4 className="text-xl font-bold">{service.title}</h4>

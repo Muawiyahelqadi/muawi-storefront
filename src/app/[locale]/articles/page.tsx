@@ -9,7 +9,7 @@ const ArticlesListPage = async () => {
   const initialArticles = (await fetchArticles(0, LIMIT)) || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-18">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-8">
       {/* Decorative elements */}
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl -z-10" />
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-violet-200/30 to-purple-200/30 rounded-full blur-3xl -z-10" />

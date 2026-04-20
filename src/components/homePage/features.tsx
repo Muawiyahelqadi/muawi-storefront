@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { FeaturesSection } from "@/src/sanity/types/sections.types";
-import { DynamicIcon } from "lucide-react/dynamic";
 import { hasCta } from "@/src/utilities/utilities";
 import AnimatedSection from "@/src/components/ui/animatedSection";
 import InteractiveButton from "@/src/components/ui/interactiveButton";
+import { Icon } from "@iconify/react";
 
 const Features = (props: FeaturesSection) => {
   return (
@@ -32,12 +32,12 @@ const Features = (props: FeaturesSection) => {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="flex-1"
             >
-              <Card className="h-full rounded-2xl shadow-[0px_0px_30px_0px_rgba(0,42,106,0.1)] border-0 hover:shadow-[0px_0px_40px_0px_rgba(0,42,106,0.15)] transition-shadow">
+              <Card className="h-full rounded-2xl shadow-[0px_0px_30px_0px_rgba(0,42,106,0.1)] border-0 hover:shadow-[0px_0px_40px_0px_rgba(0,42,106,0.15)] transition-shadow bg-white/65 backdrop-blur-sm">
                 <CardContent className="p-8">
                   <div className="mb-4">
                     <div className="inline-flex p-2.5 bg-blue-50 rounded-xl border border-transparent hover:scale-105 transition-transform duration-500 cursor-pointer">
-                      <DynamicIcon
-                        name={feature.iconName}
+                      <Icon
+                        icon={feature.icon}
                         className="w-12 h-12 text-[#3364db]"
                       />
                     </div>

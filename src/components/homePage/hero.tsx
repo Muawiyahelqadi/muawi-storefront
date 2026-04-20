@@ -11,7 +11,7 @@ import InteractiveButton from "@/src/components/ui/interactiveButton";
 const HeroBanner = (props: HeroSection) => {
   return (
     <section
-      className="relative overflow-hidden bg-white min-h-[550px] md:min-h-[450px] bg-cover bg-no-repeat rtl:scale-x-[-1]"
+      className="pt-8 relative overflow-hidden bg-white min-h-[550px] md:min-h-[450px] bg-cover bg-no-repeat rtl:scale-x-[-1]"
       id="hero"
       style={{
         backgroundImage: props.image

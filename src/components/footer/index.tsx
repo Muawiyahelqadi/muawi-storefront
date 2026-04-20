@@ -1,6 +1,6 @@
 import React from "react";
 import { fetchFooterByType } from "@/src/sanity/queries/footer";
-import { DynamicIcon } from "lucide-react/dynamic";
+import { Icon } from "@iconify/react";
 
 const Footer = async () => {
   const footer = await fetchFooterByType();
@@ -32,7 +32,7 @@ const Footer = async () => {
                     href={social.url}
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    <DynamicIcon name={social.iconName} className="w-5 h-5" />
+                    <Icon icon={social.icon} className="w-5 h-5" />
                   </a>
                 </li>
               ))}

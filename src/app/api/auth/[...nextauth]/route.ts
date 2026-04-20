@@ -18,13 +18,13 @@ export const authOptions: NextAuthOptions = {
 
         const user = await getUserByEmail(credentials.email);
 
-        if (!user || !user.passwordHash) {
+        if (!user || !user.password) {
           throw new Error("No user found with this email");
         }
 
         const passwordMatch = await bcrypt.compare(
           credentials.password,
-          user.passwordHash,
+          user.password,
         );
 
         if (!passwordMatch) {
@@ -45,8 +45,8 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/signIn",
+    error: "/signIn",
   },
   callbacks: {
     async jwt({ token, user }) {

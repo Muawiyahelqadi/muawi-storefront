@@ -5,7 +5,6 @@ import {
   SanityCtaSource,
   SanityContentBlockSource,
 } from "@/src/sanity/types/sources.types";
-import { IconName } from "lucide-react/dynamic";
 
 export interface SanitySection {
   _key: string;
@@ -22,7 +21,7 @@ export interface HeroSection extends SanitySection {
 
 export interface FeatureItem {
   _key: string;
-  iconName: IconName;
+  icon: string;
   title: string;
   subtitle?: string;
   description: string;
@@ -36,7 +35,7 @@ export interface FeaturesSection extends SanitySection {
 export interface ServiceItem {
   title: string;
   description: string;
-  iconName: IconName;
+  icon: string;
 }
 
 export interface ServicesSection extends SanitySection {
@@ -97,15 +96,17 @@ export interface Page extends SanityDocument {
 
 export interface Header extends SanityDocument {
   _type: string;
-  title?: string;
   logo: SanityImageSource;
-  menuItems: { title: string; url: string }[];
+  menuItems: { title: string; icon: string; url: string }[];
 }
 
 export interface Footer extends SanityDocument {
   _type: string;
   copyright: string;
-  socialMediaItems: { iconName: IconName; url: string }[];
+  socialMediaItems: {
+    icon: string;
+    url: string;
+  }[];
 }
 
 export interface Author extends SanityDocument {

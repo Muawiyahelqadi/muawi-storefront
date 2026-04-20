@@ -48,7 +48,7 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2 bg-white/70">
           <span className="text-lg">{currentLanguage.flag}</span>
           <span className="hidden">{currentLanguage.name}</span>
           <ChevronDown className="h-4 w-4 opacity-50" />
