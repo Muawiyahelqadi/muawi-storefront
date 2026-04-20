@@ -49,7 +49,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
   return (
     <>
       <div className="absolute top-8 left-0 right-0 z-10">
-        <div className="container mx-auto max-w-7xl px-4 py-2 flex items-center justify-between">
+        <div className="container mx-auto max-w-7xl gap-2 px-4 py-2 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             {logo && (
               <div className="relative max-h-11 max-w-[150px]">
@@ -63,7 +63,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
               </div>
             )}
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <LanguageSwitcher />
             <LogoutButton />
           </div>
