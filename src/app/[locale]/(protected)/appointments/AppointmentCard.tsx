@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -9,6 +11,9 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Phone } from "lucide-react";
 import { Appointment } from "@/src/app/[locale]/(protected)/appointments/types";
 import { statusConfig } from "@/src/app/[locale]/(protected)/appointments/constants";
+import { formatDate } from "@/src/utilities/date";
+import { useLocale } from "use-intl";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
 
 interface AppointmentCardProps {
   appointment: Appointment;
@@ -19,6 +24,10 @@ export default function AppointmentCard({
   appointment,
   onClick,
 }: AppointmentCardProps) {
+  const translate = useTranslate();
+  const locale = useLocale();
+  const isRtl = isRtlOnClient(locale);
+
   return (
     <Card
       className="cursor-pointer hover:shadow-lg transition-shadow"
@@ -31,28 +40,24 @@ export default function AppointmentCard({
             <CardDescription>{appointment.service}</CardDescription>
           </div>
           <Badge variant={statusConfig[appointment.status].variant}>
-            {statusConfig[appointment.status].label}
+            {translate(statusConfig[appointment.status].label)}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center text-sm text-muted-foreground">
-          <Calendar className="mr-2 h-4 w-4" />
-          <span>{appointment.date}</span>
+          <Calendar className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
+          <span>{formatDate(new Date(appointment.date), isRtl)}</span>
         </div>
         <div className="flex items-center text-sm text-muted-foreground">
-          <Phone className="mr-2 h-4 w-4" />
-          <span>{appointment.phone}</span>
+          <Phone className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
+          <span dir="ltr">{appointment.phone}</span>
         </div>
         <div className="pt-3 border-t flex items-center justify-between text-xs text-muted-foreground">
-          <span>
-            {new Date(appointment.createdAt).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+          <span>{formatDate(new Date(appointment.createdAt), isRtl)}</span>
+          <span className="text-primary font-medium">
+            {translate("view_details")}
           </span>
-          <span className="text-primary font-medium">View Details →</span>
         </div>
       </CardContent>
     </Card>

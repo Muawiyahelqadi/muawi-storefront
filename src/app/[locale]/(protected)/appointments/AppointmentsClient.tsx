@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import useTranslate from "@/src/i18n/useTranslate";
 import {
   AppointmentsPageProps,
   Appointment,
@@ -15,6 +16,7 @@ import AppointmentDetailsDialog from "@/src/app/[locale]/(protected)/appointment
 export default function AppointmentsClient({
   appointments,
 }: AppointmentsPageProps) {
+  const translate = useTranslate();
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAppointment, setSelectedAppointment] =
@@ -59,9 +61,9 @@ export default function AppointmentsClient({
       <div className="container max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Appointments</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{translate("appointments")}</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your customer bookings
+            {translate("manage_customer_bookings")}
           </p>
         </div>
 

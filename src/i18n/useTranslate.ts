@@ -1,10 +1,10 @@
+"use client";
+
 import { useTranslations as useIntlTranslations } from "next-intl";
-import {
-  getLocale,
-  getTranslations as getIntlTranslations,
-} from "next-intl/server";
 import { useCallback } from "react";
 import { camelToDisplayText } from "@/src/utilities/string";
+
+const RTL_LOCALES = ["ar", "he", "fa", "ur"];
 
 export function useTranslate() {
   // Pass empty string or undefined to use root namespace
@@ -15,7 +15,6 @@ export function useTranslate() {
       try {
         return t(key, values);
       } catch {
-        // Silently return key on any error
         return camelToDisplayText(key);
       }
     },
@@ -23,9 +22,16 @@ export function useTranslate() {
   );
 }
 
-export const getTranslate = async () => {
-  const locale = await getLocale();
-  return await getIntlTranslations({ locale, namespace: "common" });
+export const isRtlOnClient = (locale?: string) => {
+  if (typeof window !== "undefined") {
+    return document.documentElement.dir === "rtl";
+  }
+
+  if (!locale) {
+    return false;
+  }
+
+  return RTL_LOCALES.includes(locale);
 };
 
 export default useTranslate;

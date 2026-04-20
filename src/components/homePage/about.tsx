@@ -3,10 +3,10 @@ import { AboutSection } from "@/src/sanity/types/sections.types";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import ContentBlock from "@/src/components/ui/portableTextComponents";
 import AnimatedSection from "@/src/components/ui/animatedSection";
-import { isRtlDirection } from "@/src/i18n/utilities";
+import { isRtlOnServer } from "@/src/i18n/translate";
 
 const About = async (props: AboutSection) => {
-  const isRTL = await isRtlDirection();
+  const isRTL = await isRtlOnServer();
 
   return (
     <section className="py-16 px-4" id="about">

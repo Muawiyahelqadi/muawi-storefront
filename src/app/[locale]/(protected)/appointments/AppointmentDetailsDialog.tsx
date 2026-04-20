@@ -15,6 +15,9 @@ import { toast } from "sonner";
 import { Appointment } from "@/src/app/[locale]/(protected)/appointments/types";
 import AppointmentViewMode from "./AppointmentViewMode";
 import AppointmentEditForm from "./AppointmentEditForm";
+import { formatDate } from "@/src/utilities/date";
+import { useLocale } from "use-intl";
+import { isRtlOnClient, useTranslate } from "@/src/i18n/useTranslate";
 
 interface AppointmentDetailsDialogProps {
   appointment: Appointment | null;
@@ -27,10 +30,14 @@ export default function AppointmentDetailsDialog({
   onClose,
   onUpdate,
 }: AppointmentDetailsDialogProps) {
+  const translate = useTranslate();
   const [isEditing, setIsEditing] = useState(false);
   const [editedAppointment, setEditedAppointment] =
     useState<Appointment | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const locale = useLocale();
+  const isRtl = isRtlOnClient(locale);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -66,10 +73,10 @@ export default function AppointmentDetailsDialog({
       onUpdate(editedAppointment);
       setIsEditing(false);
 
-      toast.success("Appointment updated successfully");
+      toast.success(translate("appointment_updated_successfully"));
     } catch (error) {
       console.error("Error updating appointment:", error);
-      toast.error("Failed to update appointment");
+      toast.error(translate("failed_to_update_appointment"));
     } finally {
       setIsSaving(false);
     }
@@ -93,7 +100,9 @@ export default function AppointmentDetailsDialog({
     onClose();
   };
 
-  if (!appointment) return null;
+  if (!appointment) {
+    return null;
+  }
 
   return (
     <Dialog open={!!appointment} onOpenChange={handleCloseDialog}>
@@ -102,13 +111,10 @@ export default function AppointmentDetailsDialog({
           <div className="flex items-start justify-between">
             <div>
               <DialogTitle className="text-2xl">
-                Appointment Details
+                {translate("appointment_details")}
               </DialogTitle>
               <DialogDescription>
-                Created on{" "}
-                {new Date(appointment.createdAt).toLocaleDateString("en-US", {
-                  dateStyle: "long",
-                })}
+                {`${translate("created_on")} ${formatDate(new Date(appointment.createdAt), isRtl)}`}
               </DialogDescription>
             </div>
             {!isEditing && (
@@ -119,7 +125,7 @@ export default function AppointmentDetailsDialog({
                 className="gap-2"
               >
                 <Edit2 className="h-4 w-4" />
-                Edit
+                {translate("edit")}
               </Button>
             )}
           </div>

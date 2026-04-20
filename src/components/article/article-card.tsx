@@ -5,7 +5,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { MiniArticle } from "@/src/sanity/types/sections.types";
-import useTranslate from "@/src/hook/useTranslate";
+import useTranslate from "@/src/i18n/useTranslate";
 import Image from "next/image";
 
 const slideUpVariant = {

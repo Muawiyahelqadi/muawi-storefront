@@ -21,8 +21,7 @@ import {
   extractPhoneNumber,
   formatPhoneNumber,
 } from "@/src/utilities/phone-number";
-import useTranslate from "@/src/hook/useTranslate";
-import { isRtlDirection } from "@/src/i18n/utilities";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
 import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,25 +29,29 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { PhoneInput } from "@/src/components/ui/phone-input";
 import WhatsappIcon from "@/src/components/icons/whatsapp";
+import { useLocale } from "use-intl";
 
 // Validation schema
 const appointmentSchema = z.object({
-  service: z.string().min(1, "Please select a service"),
-  date: z.string().min(1, "Please select a date"),
+  service: z.string().min(1, "select_field_error"),
+  date: z.string().min(1, "date_field_error"),
   name: z
     .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be less than 100 characters")
-    .regex(/^[a-zA-Z\u0600-\u06FF\s'-]+$/, "Name contains invalid characters"),
-  email: z.email("Invalid email address").optional().or(z.literal("")),
+    .min(2, "name_field_minLength_error")
+    .max(100, "name_field_maxLength_error")
+    .regex(
+      /^[a-zA-Z\u0600-\u06FF\s'-]+$/,
+      "name_field_invalid_characters_error",
+    ),
+  email: z.email("email_field_invalid_error").optional().or(z.literal("")),
   phone: z
     .string()
-    .min(10, "Phone number must be at least 10 digits")
-    .regex(/^[\d\s\+\-\(\)]+$/, "Invalid phone number format"),
+    .min(10, "phone_field_minLength_error")
+    .regex(/^[\d\s\+\-\(\)]+$/, "phone_field_invalid_format_error"),
   message: z
     .string()
-    .min(10, "Message must be at least 10 characters")
-    .max(1000, "Message must be less than 1000 characters")
+    .min(10, "message_field_minLength_error")
+    .max(1000, "message_field_maxLength_error")
     .optional()
     .or(z.literal("")),
 });
@@ -57,7 +60,9 @@ type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
 const Appointment = (props: AppointmentSection) => {
   const translate = useTranslate();
-  const [isRTL, setIsRTL] = useState(false);
+  const locale = useLocale();
+  const isRtl = isRtlOnClient(locale);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -77,11 +82,6 @@ const Appointment = (props: AppointmentSection) => {
     },
   });
 
-  useEffect(() => {
-    const isRTL = isRtlDirection() as boolean;
-    setIsRTL(isRTL);
-  }, []);
-
   const onSubmit = async (data: AppointmentFormData) => {
     setIsSubmitting(true);
 
@@ -97,21 +97,17 @@ const Appointment = (props: AppointmentSection) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to submit appointment");
+        throw new Error(
+          result.error || translate("appointment_submit_failed_error"),
+        );
       }
 
-      toast.success(
-        translate("appointment_success") ||
-          "Appointment request sent successfully",
-      );
+      toast.success(translate("appointment_success"));
 
       // Reset form after successful submission
       reset();
     } catch (error) {
-      toast.error(
-        translate("appointment_error") ||
-          "Failed to submit appointment. Please try again.",
-      );
+      toast.error(translate("appointment_error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +119,7 @@ const Appointment = (props: AppointmentSection) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Image - slides from left (or right in RTL) */}
           <motion.div
-            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+            initial={{ opacity: 0, x: isRtl ? 50 : -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -142,7 +138,7 @@ const Appointment = (props: AppointmentSection) => {
 
           {/* Form - slides from right (or left in RTL) */}
           <motion.div
-            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+            initial={{ opacity: 0, x: isRtl ? -50 : 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -173,7 +169,7 @@ const Appointment = (props: AppointmentSection) => {
                         : `tel:${extractPhoneNumber(item.number)}`;
 
                       const displayText = isWhatsApp
-                        ? translate("chat_on_whatsApp") || "Chat on WhatsApp"
+                        ? translate("chat_on_whatsApp")
                         : formatPhoneNumber(item.number);
 
                       return (
@@ -233,7 +229,7 @@ const Appointment = (props: AppointmentSection) => {
                       />
                       {errors.service && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.service.message}
+                          {translate(errors.service.message || "")}
                         </p>
                       )}
                     </div>
@@ -256,7 +252,7 @@ const Appointment = (props: AppointmentSection) => {
                       />
                       {errors.date && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.date.message}
+                          {translate(errors.date.message || "")}
                         </p>
                       )}
                     </div>
@@ -277,7 +273,7 @@ const Appointment = (props: AppointmentSection) => {
                       />
                       {errors.name && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.name.message}
+                          {translate(errors.name.message || "")}
                         </p>
                       )}
                     </div>
@@ -298,7 +294,7 @@ const Appointment = (props: AppointmentSection) => {
                       />
                       {errors.email && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.email.message}
+                          {translate(errors.email.message || "")}
                         </p>
                       )}
                     </div>
@@ -321,12 +317,11 @@ const Appointment = (props: AppointmentSection) => {
                         )}
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        {translate("whatsapp_note") ||
-                          "Please provide a phone number with WhatsApp"}
+                        {translate("whatsapp_note")}
                       </p>
                       {errors.phone && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.phone.message}
+                          {translate(errors.phone.message || "")}
                         </p>
                       )}
                     </div>
@@ -350,7 +345,7 @@ const Appointment = (props: AppointmentSection) => {
                     />
                     {errors.message && (
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.message.message}
+                        {translate(errors.message.message || "")}
                       </p>
                     )}
                   </div>
@@ -363,7 +358,7 @@ const Appointment = (props: AppointmentSection) => {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {translate("submitting") || "Submitting..."}
+                        {translate("submitting")}
                       </>
                     ) : (
                       translate("make_appointment")

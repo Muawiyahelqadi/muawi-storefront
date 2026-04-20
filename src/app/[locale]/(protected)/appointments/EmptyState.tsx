@@ -1,7 +1,11 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
+import useTranslate from "@/src/i18n/useTranslate";
 
 export default function EmptyState() {
+  const translate = useTranslate();
   return (
     <Card className="p-12">
       <div className="text-center space-y-4">
@@ -9,9 +13,9 @@ export default function EmptyState() {
           <Calendar className="h-6 w-6 text-muted-foreground" />
         </div>
         <div>
-          <h3 className="font-semibold">No Appointments Found</h3>
+          <h3 className="font-semibold">{translate("no_appointments_found")}</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Try adjusting your filters or search query
+            {translate("try_adjusting_filters")}
           </p>
         </div>
       </div>

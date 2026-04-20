@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, User, Share2, ChevronLeft } from "lucide-react";
 import { Article } from "@/src/sanity/types/sections.types";
 import { getImageUrl } from "@/src/utilities/image-builder";
-import useTranslate from "@/src/hook/useTranslate";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
 import Image from "next/image";
 import ContentBlock from "@/src/components/ui/portableTextComponents";
 import ArticleCard from "@/src/components/article/article-card";
@@ -13,7 +13,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { getUrlByPage } from "@/src/routes";
 import { minReadArabic } from "@/src/utilities/string";
-import { isRtlDirection } from "@/src/i18n/utilities";
+import { formatDate } from "@/src/utilities/date";
+import { useLocale } from "use-intl";
 
 // Animation variants
 const fadeInVariant = {
@@ -32,7 +33,9 @@ interface Props {
 
 export default function ArticleDetailPage({ article }: Props) {
   const translate = useTranslate();
-  const isRtl = isRtlDirection();
+  const locale = useLocale();
+  const isRtl = isRtlOnClient(locale);
+
   const [readProgress, setReadProgress] = useState(0);
 
   useEffect(() => {
@@ -68,7 +71,7 @@ export default function ArticleDetailPage({ article }: Props) {
       </div>
 
       {/* Navigation */}
-      <nav className="sticky top-0 bg-white/80 backdrop-blur-xl border-b border-slate-200 z-40">
+      <nav className="sticky top-0 bg-white/80 backdrop-blur-xl border-b border-slate-200 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href={getUrlByPage("articles")}>
@@ -77,7 +80,7 @@ export default function ArticleDetailPage({ article }: Props) {
                 whileHover={{ x: -4 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
                 <span className="font-medium">
                   {translate("back_to_articles")}
                 </span>
@@ -151,11 +154,7 @@ export default function ArticleDetailPage({ article }: Props) {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-teal-500" />
               <span className="font-medium">
-                {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(new Date(article.publishedAt), isRtl)}
               </span>
             </div>
             <div className="flex items-center gap-2">

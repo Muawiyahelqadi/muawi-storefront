@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +15,7 @@ import { Save, X } from "lucide-react";
 import { Appointment } from "@/src/app/[locale]/(protected)/appointments/types";
 import { DatePicker } from "@/components/ui/datepicker";
 import React from "react";
+import useTranslate from "@/src/i18n/useTranslate";
 
 interface AppointmentEditFormProps {
   appointment: Appointment;
@@ -29,11 +32,12 @@ export default function AppointmentEditForm({
   onSave,
   onCancel,
 }: AppointmentEditFormProps) {
+  const translate = useTranslate();
   return (
     <>
       {/* Status */}
       <div className="space-y-2">
-        <Label htmlFor="status">Status</Label>
+        <Label htmlFor="status">{translate("status")}</Label>
         <Select
           value={appointment.status}
           onValueChange={(value) =>
@@ -44,10 +48,10 @@ export default function AppointmentEditForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="pending">{translate("pending")}</SelectItem>
+            <SelectItem value="confirmed">{translate("confirmed")}</SelectItem>
+            <SelectItem value="completed">{translate("completed")}</SelectItem>
+            <SelectItem value="cancelled">{translate("cancelled")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -55,11 +59,11 @@ export default function AppointmentEditForm({
       {/* Client Information */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Client Information
+          {translate("client_information")}
         </h3>
         <div className="space-y-3">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{translate("full_name")}</Label>
             <Input
               id="name"
               value={appointment.name}
@@ -68,15 +72,16 @@ export default function AppointmentEditForm({
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">{translate("phone_number")}</Label>
               <Input
                 id="phone"
                 value={appointment.phone}
+                dir="ltr"
                 onChange={(e) => onInputChange("phone", e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{translate("email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -91,12 +96,12 @@ export default function AppointmentEditForm({
       {/* Appointment Details */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Appointment Details
+          {translate("appointment_details")}
         </h3>
         <div className="space-y-3">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="service">Service</Label>
+              <Label htmlFor="service">{translate("service")}</Label>
               <Input
                 id="service"
                 value={appointment.service}
@@ -104,7 +109,7 @@ export default function AppointmentEditForm({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="date">Preferred Date</Label>
+              <Label htmlFor="date">{translate("preferred_date")}</Label>
               <DatePicker
                 value={appointment.date}
                 onDateChange={(date) => {
@@ -115,7 +120,7 @@ export default function AppointmentEditForm({
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="timeSpent">Time Spent</Label>
+              <Label htmlFor="timeSpent">{translate("time_spent")}</Label>
               <Input
                 id="timeSpent"
                 value={appointment.timeSpent || ""}
@@ -123,7 +128,7 @@ export default function AppointmentEditForm({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="payment">Expected Payment</Label>
+              <Label htmlFor="payment">{translate("expected_payment")}</Label>
               <Input
                 id="payment"
                 value={appointment.expectedPaymentAmount || ""}
@@ -138,25 +143,25 @@ export default function AppointmentEditForm({
 
       {/* Client Message (Read-only) */}
       <div className="space-y-2">
-        <Label htmlFor="clientMessage">Client Message</Label>
+        <Label htmlFor="clientMessage">{translate("client_message")}</Label>
         <Textarea
           id="clientMessage"
           rows={3}
           disabled={true}
           value={appointment.message || ""}
-          placeholder="Client Message..."
+          placeholder={`${translate("client_message")}...`}
         />
       </div>
 
       {/* Internal Notes */}
       <div className="space-y-2">
-        <Label htmlFor="notes">Internal Notes</Label>
+        <Label htmlFor="notes">{translate("internal_notes")}</Label>
         <Textarea
           id="notes"
           rows={3}
           value={appointment.notes || ""}
           onChange={(e) => onInputChange("notes", e.target.value)}
-          placeholder="Add internal notes..."
+          placeholder={`${translate("internal_notes")}...`}
         />
       </div>
 
@@ -168,7 +173,7 @@ export default function AppointmentEditForm({
           className="gap-2 rounded-md"
         >
           <Save className="h-4 w-4" />
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isSaving ? translate("saving") : translate("save_changes")}
         </Button>
         <Button
           onClick={onCancel}
@@ -177,7 +182,7 @@ export default function AppointmentEditForm({
           className="gap-2"
         >
           <X className="h-4 w-4" />
-          Cancel
+          {translate("cancel")}
         </Button>
       </div>
     </>

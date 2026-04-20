@@ -10,8 +10,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import useTranslate from "@/src/hook/useTranslate";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
 import { useLocale } from "use-intl";
+import {
+  ArabicDateLocale,
+  EnglishDateLocale,
+  formatDate,
+} from "@/src/utilities/date";
 
 interface Props {
   blockedDateRanges?: { endDate: string; startDate: string; reason?: string }[];
@@ -21,19 +26,7 @@ interface Props {
   }[];
   onDateChange?: (date: string) => void;
   className?: string;
-  value?: string; // Add value prop for controlled component
-}
-
-function formatDate(date: Date | undefined) {
-  if (!date) {
-    return "";
-  }
-
-  return date.toLocaleDateString("en-US", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  value?: string;
 }
 
 function isValidDate(date: Date | undefined) {
@@ -82,15 +75,9 @@ function isDateBlocked(date: Date, blockedDates?: Array<{ date: string }>) {
 export function DatePicker(props: Props) {
   const translate = useTranslate();
   const locale = useLocale();
-  const isArabic = locale === "ar";
+  const isRtl = isRtlOnClient(locale);
 
-  const {
-    blockedDates,
-    blockedDateRanges,
-    onDateChange,
-    className,
-    value: controlledValue,
-  } = props;
+  const { blockedDates, blockedDateRanges, onDateChange, className } = props;
 
   const [open, setOpen] = React.useState(false);
 
@@ -98,7 +85,7 @@ export function DatePicker(props: Props) {
   const initialDate = new Date();
   const [date, setDate] = React.useState<Date | undefined>(initialDate);
   const [month, setMonth] = React.useState<Date | undefined>(initialDate);
-  const [value, setValue] = React.useState(formatDate(initialDate));
+  const [value, setValue] = React.useState(formatDate(initialDate, isRtl));
 
   // Set date range: today to December 31, 2026
   const today = React.useMemo(() => {
@@ -140,7 +127,7 @@ export function DatePicker(props: Props) {
   const handleDateSelect = React.useCallback(
     (selectedDate: Date | undefined) => {
       setDate(selectedDate);
-      const formattedDate = formatDate(selectedDate);
+      const formattedDate = formatDate(selectedDate, isRtl);
       setValue(formattedDate);
       setOpen(false);
 
@@ -155,7 +142,7 @@ export function DatePicker(props: Props) {
 
   // Set initial date on mount - notify parent of the initial value
   React.useEffect(() => {
-    const formattedDate = formatDate(initialDate);
+    const formattedDate = formatDate(initialDate, isRtl);
     if (onDateChange) {
       onDateChange(formattedDate);
     }
@@ -175,7 +162,7 @@ export function DatePicker(props: Props) {
 
         // Call the onDateChange callback
         if (onDateChange) {
-          onDateChange(formatDate(parsedDate));
+          onDateChange(formatDate(parsedDate, isRtl));
         }
       }
     },
@@ -212,7 +199,7 @@ export function DatePicker(props: Props) {
           </PopoverTrigger>
           <PopoverContent
             className="w-auto overflow-hidden p-0"
-            align="end"
+            align={isRtl ? "start" : "end"}
             alignOffset={-8}
             sideOffset={10}
           >
@@ -223,6 +210,7 @@ export function DatePicker(props: Props) {
               startMonth={today}
               endMonth={maxDate}
               month={month}
+              locale={{ code: isRtl ? ArabicDateLocale : EnglishDateLocale }}
               onMonthChange={setMonth}
               onSelect={handleDateSelect}
               disabled={isDisabled}

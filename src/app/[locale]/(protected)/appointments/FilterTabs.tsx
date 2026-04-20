@@ -1,3 +1,5 @@
+"use client";
+
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -7,6 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StatusCounts } from "@/src/app/[locale]/(protected)/appointments/types";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
+import { useLocale } from "use-intl";
 
 interface Props {
   filterStatus?: string;
@@ -15,12 +19,32 @@ interface Props {
 }
 
 const FilterTabs = ({ filterStatus, setFilterStatus, statusCounts }: Props) => {
+  const translate = useTranslate();
+  const locale = useLocale();
+  const isRtl = isRtlOnClient(locale);
+
   const statusOptions = [
-    { value: "all", label: "All", count: statusCounts.all },
-    { value: "pending", label: "Pending", count: statusCounts.pending },
-    { value: "confirmed", label: "Confirmed", count: statusCounts.confirmed },
-    { value: "completed", label: "Completed", count: statusCounts.completed },
-    { value: "cancelled", label: "Cancelled", count: statusCounts.cancelled },
+    { value: "all", label: translate("all"), count: statusCounts.all },
+    {
+      value: "pending",
+      label: translate("pending"),
+      count: statusCounts.pending,
+    },
+    {
+      value: "confirmed",
+      label: translate("confirmed"),
+      count: statusCounts.confirmed,
+    },
+    {
+      value: "completed",
+      label: translate("completed"),
+      count: statusCounts.completed,
+    },
+    {
+      value: "cancelled",
+      label: translate("cancelled"),
+      count: statusCounts.cancelled,
+    },
   ];
 
   return (
@@ -29,7 +53,7 @@ const FilterTabs = ({ filterStatus, setFilterStatus, statusCounts }: Props) => {
       <div className="lg:hidden w-full">
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={translate("filter_by_status")} />
           </SelectTrigger>
           <SelectContent>
             {statusOptions.map((option) => (
@@ -47,6 +71,7 @@ const FilterTabs = ({ filterStatus, setFilterStatus, statusCounts }: Props) => {
           value={filterStatus}
           onValueChange={setFilterStatus}
           className="w-full"
+          dir={isRtl ? "rtl" : "ltr"}
         >
           <TabsList className="grid w-full grid-cols-5">
             {statusOptions.map((option) => (

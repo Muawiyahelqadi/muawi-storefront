@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Check, ChevronDown } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useLocale } from "use-intl";
 
 interface Language {
@@ -22,7 +22,6 @@ const languages: Record<string, Language> = {
 };
 
 export default function LanguageSwitcher() {
-  const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
 
@@ -40,7 +39,7 @@ export default function LanguageSwitcher() {
 
     const newPath = segments.join("/");
 
-    router.push(newPath);
+    window.location.href = newPath;
   };
 
   const currentLanguage = languages[locale || "en"];

@@ -9,9 +9,10 @@ import Link from "next/link";
 import { getUrlByPage } from "@/src/routes";
 import { fetchArticles } from "@/src/sanity/queries/article";
 import useInfiniteScroll from "react-infinite-scroll-hook";
-import useTranslate from "@/src/hook/useTranslate";
-import { isRtlDirection } from "@/src/i18n/utilities";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
 import { minReadArabic } from "@/src/utilities/string";
+import { formatDate } from "@/src/utilities/date";
+import { useLocale } from "use-intl";
 
 interface ArticleCardsProps {
   initialArticles: Article[];
@@ -22,8 +23,10 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
   initialArticles,
   limit,
 }) => {
+  const locale = useLocale();
   const translate = useTranslate();
-  const isRtl = isRtlDirection();
+  const isRtl = isRtlOnClient(locale);
+
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(articles.length >= limit);
@@ -97,13 +100,7 @@ const ArticleCards: React.FC<ArticleCardsProps> = ({
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {new Date(article.publishedAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "short",
-                            day: "numeric",
-                          },
-                        )}
+                        {formatDate(new Date(article.publishedAt), isRtl)}
                       </span>
                     </div>
                   </div>
