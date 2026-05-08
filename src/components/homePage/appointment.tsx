@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -187,7 +187,15 @@ const Appointment = (props: AppointmentSection) => {
                               className="text-muted-foreground hover:text-primary mb-0 text-right"
                               dir="rtl"
                             >
-                              <span dir="ltr">{displayText}</span>
+                              <span
+                                dir={
+                                  isRtl && item._type === "whatsappLink"
+                                    ? "rtl"
+                                    : "ltr"
+                                }
+                              >
+                                {displayText}
+                              </span>
                             </p>
                           </a>
                         </div>

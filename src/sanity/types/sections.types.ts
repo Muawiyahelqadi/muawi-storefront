@@ -26,6 +26,14 @@ export interface FeatureItem {
   subtitle?: string;
   description: string;
   cta?: SanityCtaSource;
+  contactLinks?: {
+    _key: string;
+    _type: "whatsappLink" | "phoneNumber" | "emails";
+    url?: string;
+    email?: string
+    number?: string;
+  }[];
+
 }
 
 export interface FeaturesSection extends SanitySection {

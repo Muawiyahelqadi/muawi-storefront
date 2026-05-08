@@ -1,11 +1,25 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { FeaturesSection } from "@/src/sanity/types/sections.types";
 import { hasCta } from "@/src/utilities/utilities";
 import AnimatedSection from "@/src/components/ui/animatedSection";
 import InteractiveButton from "@/src/components/ui/interactiveButton";
 import { Icon } from "@iconify/react";
+import {
+  extractPhoneNumber,
+  formatPhoneNumber,
+} from "@/src/utilities/phone-number";
+import useTranslate, { isRtlOnClient } from "@/src/i18n/useTranslate";
+import WhatsappIcon from "@/src/components/icons/whatsapp";
+import { Phone, Mail } from "lucide-react";
+import { useLocale } from "use-intl";
 
 const Features = (props: FeaturesSection) => {
+  const translate = useTranslate();
+  const locale = useLocale();
+  const isRtl = isRtlOnClient(locale);
+
   return (
     <section className="px-4 -mt-[70px] relative z-10">
       <div className="container mx-auto max-w-7xl">
@@ -61,6 +75,70 @@ const Features = (props: FeaturesSection) => {
                     >
                       {feature.cta!.text}
                     </InteractiveButton>
+                  )}
+                  {feature.contactLinks && feature.contactLinks.length > 0 && (
+                    <div className="flex flex-col gap-4 mb-6">
+                      {feature.contactLinks.map((item) => {
+                        const { _type, _key } = item;
+
+                        console.log(item);
+                        if (_type === "emails" && !item.email) {
+                          return null;
+                        }
+                        if (_type === "whatsappLink" && !item.url) {
+                          return null;
+                        }
+                        if (_type === "phoneNumber" && !item.number) {
+                          return null;
+                        }
+
+                        const urlMap = {
+                          whatsappLink: item.url,
+                          phoneNumber: `tel:${extractPhoneNumber(item.number)}`,
+                          emails: `mailto:${item.email}`,
+                        };
+
+                        const displayTextMap = {
+                          whatsappLink: translate("chat_on_whatsApp"),
+                          phoneNumber: formatPhoneNumber(item.number),
+                          emails: item.email,
+                        };
+
+                        const iconMap = {
+                          whatsappLink: (
+                            <WhatsappIcon className="w-5 h-5 text-muted-foreground" />
+                          ),
+                          phoneNumber: (
+                            <Phone className="w-5 h-5 text-muted-foreground rtl:rotate-270" />
+                          ),
+                          emails: (
+                            <Mail className="w-5 h-5 text-muted-foreground" />
+                          ),
+                        };
+
+                        const url = urlMap[_type];
+                        const displayText = displayTextMap[_type];
+                        const icon = iconMap[_type];
+
+                        // Only whatsapp text respects RTL; phone/email are always LTR
+                        const textDir =
+                          isRtl && _type === "whatsappLink" ? "rtl" : "ltr";
+
+                        return (
+                          <div className="flex items-center gap-3" key={_key}>
+                            {icon}
+                            <a href={url}>
+                              <p
+                                className="text-muted-foreground hover:text-primary mb-0 text-right"
+                                dir="rtl"
+                              >
+                                <span dir={textDir}>{displayText}</span>
+                              </p>
+                            </a>
+                          </div>
+                        );
+                      })}
+                    </div>
                   )}
                 </CardContent>
               </Card>
