@@ -59,9 +59,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
         el.scrollIntoView({ behavior: "smooth" });
 
         // re-align after images/lazy content load and shift the layout
-        setTimeout(() => {
-          document.getElementById(hash)?.scrollIntoView({ behavior: "auto" });
-        }, 700);
+        setTimeout(() => scrollToSection(`#${hash}`), 700);
 
         return true;
       };
