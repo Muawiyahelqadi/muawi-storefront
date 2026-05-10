@@ -25,13 +25,11 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState("");
 
-  // strip locale prefix: "/en/articles" -> "/articles", "/en" -> "/"
   const currentPath = useMemo(() => {
     const stripped = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), "");
     return stripped || "/";
   }, [pathname, locale]);
 
-  // section ids that live on the current page
   const sectionsOnPage = useMemo(
     () =>
       menuItems
@@ -47,7 +45,40 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
     }
   }, [locale]);
 
-  // scroll spy — only watches sections that exist on the current page
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return;
+
+      let attempts = 0;
+
+      const tryScroll = () => {
+        const el = document.getElementById(hash);
+        if (!el) return false;
+
+        el.scrollIntoView({ behavior: "smooth" });
+
+        // re-align after images/lazy content load and shift the layout
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "auto" });
+        }, 700);
+
+        return true;
+      };
+
+      if (tryScroll()) return;
+
+      const interval = setInterval(() => {
+        if (tryScroll() || ++attempts >= 30) clearInterval(interval);
+      }, 100);
+    };
+
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, [pathname]);
+
+  // scroll spy
   useEffect(() => {
     if (sectionsOnPage.length === 0) return;
 
@@ -63,7 +94,6 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
           }
         });
 
-        // first section in menu order that's currently in view, or "" if none
         const firstActive =
           sectionsOnPage.find((id) => intersecting.has(id)) ?? "";
         setActiveSection(firstActive);
@@ -82,10 +112,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
   const isActive = (url: string) => {
     const { path, hash } = parseUrl(url);
     if (path !== currentPath) return false;
-
     if (hash) return hash === activeSection;
-
-    // no-hash link (e.g. "/"): active when no section is in view
     return !sectionsOnPage.includes(activeSection);
   };
 
@@ -103,10 +130,11 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
+      // build localized URL: "/" -> "/en", "/articles" -> "/en/articles"
       const localizedPath = path === "/" ? `/${locale}` : `/${locale}${path}`;
       const fullUrl = hash ? `${localizedPath}#${hash}` : localizedPath;
       e.preventDefault();
-      router.push(fullUrl, { scroll: true });
+      router.push(fullUrl, { scroll: false });
     }
   };
 
