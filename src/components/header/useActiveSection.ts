@@ -10,6 +10,8 @@ export function useActiveSection(sectionIds: string[]) {
     if (!sectionIds.length) return;
 
     const visible = new Set<string>();
+    const observed = new Set<string>();
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -21,12 +23,35 @@ export function useActiveSection(sectionIds: string[]) {
       { rootMargin: "-40% 0px -40% 0px" },
     );
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+    // observe whatever's currently in the DOM
+    const observeAvailable = () => {
+      for (const id of sectionIds) {
+        if (observed.has(id)) continue;
+        const el = document.getElementById(id);
+        if (el) {
+          observer.observe(el);
+          observed.add(id);
+        }
+      }
+      return observed.size === sectionIds.length;
+    };
 
-    return () => observer.disconnect();
+    // watch for sections that mount later (Sanity content, lazy loading)
+    let mutationObs: MutationObserver | null = null;
+    if (!observeAvailable()) {
+      mutationObs = new MutationObserver(() => {
+        if (observeAvailable()) {
+          mutationObs?.disconnect();
+          mutationObs = null;
+        }
+      });
+      mutationObs.observe(document.body, { childList: true, subtree: true });
+    }
+
+    return () => {
+      observer.disconnect();
+      mutationObs?.disconnect();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
