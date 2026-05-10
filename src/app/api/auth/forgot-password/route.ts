@@ -1,8 +1,14 @@
 import crypto from "crypto";
+import nodemailer from "nodemailer";
 import { client } from "@/src/sanity/lib/client";
-import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 export async function POST(req: Request) {
   try {
@@ -33,7 +39,6 @@ export async function POST(req: Request) {
       `*[_type == "passwordResetToken" && email == $email]{ _id }`,
       { email },
     );
-
     for (const doc of existing) {
       await client.delete(doc._id);
     }
@@ -43,11 +48,13 @@ export async function POST(req: Request) {
 
     const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
 
-    const { error } = await resend.emails.send({
-      from: process.env.APPOINTMENT_EMAIL_FROM!,
-      to: email,
-      subject: "Reset your password",
-      html: `
+    // Send email with Nodemailer + Gmail
+    try {
+      await transporter.sendMail({
+        from: `"Support" <${process.env.GMAIL_USER}>`,
+        to: email,
+        subject: "Reset your password",
+        html: `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
           <h2>Reset your password</h2>
           <p>We received a request to reset your password. Click the button below to choose a new one.</p>
@@ -64,10 +71,9 @@ export async function POST(req: Request) {
           </p>
         </div>
       `,
-    });
-
-    if (error) {
-      console.error("Resend error:", error);
+      });
+    } catch (emailError) {
+      console.error("Email error:", emailError);
       return Response.json({ error: "Failed to send email." }, { status: 500 });
     }
 
