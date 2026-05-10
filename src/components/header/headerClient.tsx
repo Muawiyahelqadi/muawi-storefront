@@ -95,7 +95,6 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
   ) => {
     if (!url) return;
     const { path, hash } = parseUrl(url);
-    const fullUrl = hash ? `${path}#${hash}` : path;
 
     if (hash && path === currentPath) {
       e.preventDefault();
@@ -104,7 +103,8 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // different page — navigate
+      const localizedPath = path === "/" ? `/${locale}` : `/${locale}${path}`;
+      const fullUrl = hash ? `${localizedPath}#${hash}` : localizedPath;
       e.preventDefault();
       router.push(fullUrl, { scroll: true });
     }
@@ -138,7 +138,9 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
           {menuItems?.map((link) => {
             const active = isActive(link.url);
             const { path, hash } = parseUrl(link.url);
-            const href = hash ? `${path}#${hash}` : path;
+            const localizedPath =
+              path === "/" ? `/${locale}` : `/${locale}${path}`;
+            const href = hash ? `${localizedPath}#${hash}` : localizedPath;
 
             return (
               <li key={link.url}>
