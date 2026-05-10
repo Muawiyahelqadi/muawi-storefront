@@ -45,6 +45,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
     }
   }, [locale]);
 
+  // scroll to hash after navigation — robust against layout shifts
   useEffect(() => {
     const scrollToHash = () => {
       const hash = window.location.hash.slice(1);
@@ -59,7 +60,9 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
         el.scrollIntoView({ behavior: "smooth" });
 
         // re-align after images/lazy content load and shift the layout
-        setTimeout(() => scrollToSection(`#${hash}`), 250);
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "auto" });
+        }, 700);
 
         return true;
       };
