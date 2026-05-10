@@ -45,7 +45,6 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
     }
   }, [locale]);
 
-  // scroll to hash after navigation — robust against layout shifts
   useEffect(() => {
     const scrollToHash = () => {
       const hash = window.location.hash.slice(1);
@@ -58,12 +57,9 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
         if (!el) return false;
 
         el.scrollIntoView({ behavior: "smooth" });
-
-        // re-align after images/lazy content load and shift the layout
         setTimeout(() => {
           document.getElementById(hash)?.scrollIntoView({ behavior: "auto" });
         }, 700);
-
         return true;
       };
 
@@ -79,35 +75,55 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
     return () => window.removeEventListener("hashchange", scrollToHash);
   }, [pathname]);
 
-  // scroll spy
   useEffect(() => {
     if (sectionsOnPage.length === 0) return;
 
     const intersecting = new Set<string>();
+    let observer: IntersectionObserver | null = null;
+    let attempts = 0;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            intersecting.add(entry.target.id);
-          } else {
-            intersecting.delete(entry.target.id);
-          }
-        });
+    const setupObserver = () => {
+      const elements = sectionsOnPage
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => el !== null);
 
-        const firstActive =
-          sectionsOnPage.find((id) => intersecting.has(id)) ?? "";
-        setActiveSection(firstActive);
-      },
-      { rootMargin: "-40% 0px -40% 0px" },
-    );
+      if (elements.length === 0) return false;
 
-    sectionsOnPage.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+      observer?.disconnect();
+      intersecting.clear();
 
-    return () => observer.disconnect();
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              intersecting.add(entry.target.id);
+            } else {
+              intersecting.delete(entry.target.id);
+            }
+          });
+
+          const firstActive =
+            sectionsOnPage.find((id) => intersecting.has(id)) ?? "";
+          setActiveSection(firstActive);
+        },
+        { rootMargin: "-40% 0px -40% 0px" },
+      );
+
+      elements.forEach((el) => observer!.observe(el));
+
+      return elements.length === sectionsOnPage.length;
+    };
+
+    if (setupObserver()) return () => observer?.disconnect();
+
+    const interval = setInterval(() => {
+      if (setupObserver() || ++attempts >= 30) clearInterval(interval);
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+      observer?.disconnect();
+    };
   }, [sectionsOnPage.join(",")]);
 
   const isActive = (url: string) => {
@@ -131,7 +147,6 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // build localized URL: "/" -> "/en", "/articles" -> "/en/articles"
       const localizedPath = path === "/" ? `/${locale}` : `/${locale}${path}`;
       const fullUrl = hash ? `${localizedPath}#${hash}` : localizedPath;
       e.preventDefault();
