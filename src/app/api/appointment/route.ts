@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { z } from "zod";
 import { client } from "@/src/sanity/lib/client";
 import { SCHEMA_TYPES } from "@/src/sanity/schemas/schema-types";
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Nodemailer with Gmail
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 // Validation schema
 const appointmentSchema = z.object({
@@ -44,7 +50,7 @@ const checkRateLimit = (ip: string): boolean => {
   return true;
 };
 
-// Email template (same beautiful design)
+// Email template
 const generateEmailHTML = (data: {
   service: string;
   date: string;
@@ -218,7 +224,6 @@ const generateEmailHTML = (data: {
 // API Route Handler
 export async function POST(request: NextRequest) {
   try {
-    debugger;
     // Rate limiting
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -268,7 +273,7 @@ export async function POST(request: NextRequest) {
         phone: data.phone,
         email: data.email || undefined,
         message: data.message || undefined,
-        status: "pending", // Default status
+        status: "pending",
         createdAt: new Date().toISOString(),
         submittedFrom: ip,
       });
@@ -282,17 +287,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send email with Resend
-    const { error } = await resend.emails.send({
-      from: process.env.APPOINTMENT_EMAIL_FROM!,
-      to: process.env.APPOINTMENT_EMAIL_TO!,
-      subject: `New Appointment: ${data.service} - ${data.name}`,
-      replyTo: data.email || undefined,
-      html: generateEmailHTML(data),
-    });
-
-    if (error) {
-      console.error("Resend error:", error);
+    // Send email with Nodemailer + Gmail
+    try {
+      await transporter.sendMail({
+        from: `"Appointment System" <${process.env.GMAIL_USER}>`,
+        to: [data.email, process.env.GMAIL_USER].filter(Boolean) as string[],
+        subject: `New Appointment: ${data.service} - ${data.name}`,
+        replyTo: data.email || undefined,
+        html: generateEmailHTML(data),
+      });
+    } catch (emailError) {
+      console.error("Email error:", emailError);
       return NextResponse.json(
         { error: "Failed to send email notification" },
         { status: 500 },
