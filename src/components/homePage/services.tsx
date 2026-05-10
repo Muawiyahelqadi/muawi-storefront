@@ -78,7 +78,7 @@ const Services = (props: ServicesSection) => {
                   <div className="flex items-center gap-4 mb-3">
                     <Icon
                       icon={service.icon}
-                      className="w-12 h-12 text-[#3364db]"
+                      className="min-w-12 min-h-12 text-[#3364db]"
                     />
                     <h4 className="text-xl font-bold">{service.title}</h4>
                   </div>

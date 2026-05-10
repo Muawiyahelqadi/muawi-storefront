@@ -43,7 +43,7 @@ const appointmentSchema = z.object({
       /^[a-zA-Z\u0600-\u06FF\s'-]+$/,
       "name_field_invalid_characters_error",
     ),
-  email: z.email("email_field_invalid_error").optional().or(z.literal("")),
+  email: z.email("email_field_invalid_error"),
   phone: z
     .string()
     .min(10, "phone_field_minLength_error")
@@ -294,7 +294,7 @@ const Appointment = (props: AppointmentSection) => {
                         render={({ field }) => (
                           <Input
                             type="email"
-                            placeholder={`${translate("email")} (${translate("optional")})`}
+                            placeholder={`${translate("email")}`}
                             {...field}
                             className={errors.email ? "border-red-500" : ""}
                           />

@@ -7,22 +7,39 @@ import { cn } from "@/lib/utils";
 import { Header } from "@/src/sanity/types/sections.types";
 import { getImageUrl } from "@/src/utilities/image-builder";
 import { scrollToSection } from "@/src/utilities/scroll-handler";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "use-intl";
 import LanguageSwitcher from "@/src/components/ui/LanguageSwitcher";
 import { Icon } from "@iconify/react";
 import { LogoutButton } from "@/src/components/auth/LogoutButton";
 
-const isRelativeLink = (url?: string) => {
-  return url?.startsWith("#");
+const parseUrl = (url: string) => {
+  if (url.startsWith("#")) return { path: "/", hash: url.slice(1) };
+  const [rawPath, hash = ""] = url.split("#");
+  return { path: rawPath || "/", hash };
 };
 
 const HeaderClient = ({ logo, menuItems }: Header) => {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const [activeSection, setActiveSection] = useState("");
 
-  const isHomePage = pathname === "/" || pathname === `/${locale}`;
+  // strip locale prefix: "/en/articles" -> "/articles", "/en" -> "/"
+  const currentPath = useMemo(() => {
+    const stripped = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), "");
+    return stripped || "/";
+  }, [pathname, locale]);
+
+  // section ids that live on the current page
+  const sectionsOnPage = useMemo(
+    () =>
+      menuItems
+        ?.map((l) => parseUrl(l.url))
+        .filter((p) => p.path === currentPath && p.hash)
+        .map((p) => p.hash) ?? [],
+    [menuItems, currentPath],
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -30,19 +47,66 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
     }
   }, [locale]);
 
+  // scroll spy — only watches sections that exist on the current page
+  useEffect(() => {
+    if (sectionsOnPage.length === 0) return;
+
+    const intersecting = new Set<string>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            intersecting.add(entry.target.id);
+          } else {
+            intersecting.delete(entry.target.id);
+          }
+        });
+
+        // first section in menu order that's currently in view, or "" if none
+        const firstActive =
+          sectionsOnPage.find((id) => intersecting.has(id)) ?? "";
+        setActiveSection(firstActive);
+      },
+      { rootMargin: "-40% 0px -40% 0px" },
+    );
+
+    sectionsOnPage.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [sectionsOnPage.join(",")]);
+
+  const isActive = (url: string) => {
+    const { path, hash } = parseUrl(url);
+    if (path !== currentPath) return false;
+
+    if (hash) return hash === activeSection;
+
+    // no-hash link (e.g. "/"): active when no section is in view
+    return !sectionsOnPage.includes(activeSection);
+  };
+
   const handleLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     url?: string,
   ) => {
-    if (isHomePage && isRelativeLink(url)) {
+    if (!url) return;
+    const { path, hash } = parseUrl(url);
+    const fullUrl = hash ? `${path}#${hash}` : path;
+
+    if (hash && path === currentPath) {
       e.preventDefault();
-      scrollToSection(url);
-    } else if (url && isRelativeLink(url)) {
+      scrollToSection(`#${hash}`);
+    } else if (!hash && path === currentPath) {
       e.preventDefault();
-      router.push("/" + url, { scroll: true });
-    } else if (url) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // different page — navigate
       e.preventDefault();
-      router.push(url, { scroll: true });
+      router.push(fullUrl, { scroll: true });
     }
   };
 
@@ -55,7 +119,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
               <div className="relative max-h-11 max-w-[150px]">
                 <Image
                   src={getImageUrl(logo)}
-                  alt={"Logo"}
+                  alt="Logo"
                   width={400}
                   height={400}
                   className="w-auto h-auto object-contain transition-transform group-hover:scale-105"
@@ -69,22 +133,29 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
           </div>
         </div>
       </div>
-      <nav className="fixed bottom-4 lg:top-8 lg:bottom-auto  left-1/2 -translate-x-1/2 z-30 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
+      <nav className="fixed bottom-4 lg:top-8 lg:bottom-auto left-1/2 -translate-x-1/2 z-30 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
         <ul className="flex items-center justify-around px-4 py-2 h-14 gap-8">
-          {menuItems?.map((link) => (
-            <li key={link.url}>
-              <Link
-                href={link.url}
-                onClick={(e) => handleLinkClick(e, link.url)}
-                className={cn(
-                  "transition-colors text-gray-500 hover:text-blue-600 px-2 py-1",
-                )}
-              >
-                <span className="text-sm hidden lg:block">{link.title}</span>
-                <Icon icon={link.icon} className="w-6 h-6 lg:hidden" />
-              </Link>
-            </li>
-          ))}
+          {menuItems?.map((link) => {
+            const active = isActive(link.url);
+            const { path, hash } = parseUrl(link.url);
+            const href = hash ? `${path}#${hash}` : path;
+
+            return (
+              <li key={link.url}>
+                <Link
+                  href={href}
+                  onClick={(e) => handleLinkClick(e, link.url)}
+                  className={cn(
+                    "transition-colors px-2 py-1 hover:text-blue-600",
+                    active ? "text-blue-600 font-semibold" : "text-gray-500",
+                  )}
+                >
+                  <span className="text-sm hidden lg:block">{link.title}</span>
+                  <Icon icon={link.icon} className="w-6 h-6 lg:hidden" />
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </>
