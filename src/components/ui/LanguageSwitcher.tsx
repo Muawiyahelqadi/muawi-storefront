@@ -13,12 +13,11 @@ import { useLocale } from "use-intl";
 
 interface Language {
   name: string;
-  flag: string;
 }
 
 const languages: Record<string, Language> = {
-  en: { name: "English", flag: "🇺🇸" },
-  ar: { name: "العربية", flag: "🇵🇸" },
+  en: { name: "English" },
+  ar: { name: "العربية" },
 };
 
 export default function LanguageSwitcher() {
@@ -48,23 +47,22 @@ export default function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="gap-2 bg-white/70">
-          <span className="text-lg">{currentLanguage.flag}</span>
-          <span className="hidden">{currentLanguage.name}</span>
+          <span>{currentLanguage.name}</span>
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {Object.entries(languages).map(([code, { name, flag }]) => (
-          <DropdownMenuItem
-            key={code}
-            onClick={() => changeLanguage(code)}
-            className="cursor-pointer"
-          >
-            <span className="text-xl mr-3">{flag}</span>
-            <span className="flex-1">{name}</span>
-            {locale === code && <Check className="h-4 w-4 text-primary" />}
-          </DropdownMenuItem>
-        ))}
+        {Object.entries(languages)
+          .filter(([code]) => code !== locale)
+          .map(([code, { name }]) => (
+            <DropdownMenuItem
+              key={code}
+              onClick={() => changeLanguage(code)}
+              className="cursor-pointer"
+            >
+              <span className="flex-1">{name}</span>
+            </DropdownMenuItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

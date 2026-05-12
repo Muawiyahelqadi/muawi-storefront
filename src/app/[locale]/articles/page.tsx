@@ -2,6 +2,7 @@ import React from "react";
 import { fetchArticlesListPage } from "@/src/sanity/queries/articles-list";
 import ArticleCards from "@/src/components/articles-list/ArticlesCards";
 import { fetchArticles } from "@/src/sanity/queries/article";
+import { HEADER_PADDING_TOP } from "@/src/components/header/helper";
 
 const LIMIT = 6;
 const ArticlesListPage = async () => {
@@ -15,7 +16,7 @@ const ArticlesListPage = async () => {
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-violet-200/30 to-purple-200/30 rounded-full blur-3xl -z-10" />
 
       {/* Header */}
-      <header className="pt-20 pb-16 px-6">
+      <header className={`${HEADER_PADDING_TOP} pb-16 px-6`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center space-y-6 animate-fade-in">
             <div className="inline-block">

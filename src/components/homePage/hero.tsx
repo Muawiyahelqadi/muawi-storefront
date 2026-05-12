@@ -7,6 +7,7 @@ import { getImageUrl } from "@/src/utilities/image-builder";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/src/components/ui/animatedSection";
 import InteractiveButton from "@/src/components/ui/interactiveButton";
+import { HEADER_PADDING_TOP } from "@/src/components/header/helper";
 
 const HeroBanner = (props: HeroSection) => {
   return (
@@ -22,7 +23,7 @@ const HeroBanner = (props: HeroSection) => {
       <div className="container mx-auto max-w-7xl px-4 rtl:scale-x-[-1]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7 xl:col-span-7">
-            <div className="pt-20 pb-40 space-y-6">
+            <div className={`${HEADER_PADDING_TOP} pb-40 space-y-6`}>
               {/* Line - fade in first */}
               <AnimatedSection
                 initial={{ opacity: 0, width: 0 }}

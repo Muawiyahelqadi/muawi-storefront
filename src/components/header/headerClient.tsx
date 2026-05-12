@@ -44,10 +44,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
     return !activeSection;
   };
 
-  const handleClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    url: string,
-  ) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
     e.preventDefault();
     const parsed = parseUrl(url);
 
@@ -66,13 +63,13 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
         <div className="container mx-auto max-w-7xl gap-2 px-4 py-2 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             {logo && (
-              <div className="relative max-h-11 max-w-[150px]">
+              <div className="relative h-14 w-[150px]">
                 <Image
                   src={getImageUrl(logo)}
                   alt="Logo"
-                  width={400}
-                  height={400}
-                  className="w-auto h-auto object-contain transition-transform group-hover:scale-105"
+                  width={150}
+                  height={60}
+                  className="w-auto h-auto max-h-full max-w-full object-contain transition-transform group-hover:scale-105"
                 />
               </div>
             )}
@@ -83,7 +80,7 @@ const HeaderClient = ({ logo, menuItems }: Header) => {
           </div>
         </div>
       </div>
-      <nav className="fixed bottom-4 lg:top-8 lg:bottom-auto left-1/2 -translate-x-1/2 z-30 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
+      <nav className="fixed bottom-4 lg:top-10 lg:bottom-auto left-1/2 -translate-x-1/2 z-30 bg-white/70 backdrop-blur-sm shadow-[0_-1px_8px_rgba(0,0,0,0.08)] rounded-full">
         <ul className="flex items-center justify-around px-4 py-2 h-14 gap-8">
           {menuItems?.map((link) => (
             <li key={link.url}>
